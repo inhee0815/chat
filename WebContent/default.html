@@ -1,16 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 </head>
 <body>
-	<form action=http://localhost:8080/project5/UserNameServlet>
-		<mark>Please supply a name:</mark>
-		<br>
-		<input type="text" name="username" size="20" />
-		<input type="submit" value="Enter" />
+	<form name ="nameform" action="/project5/UserNameServlet">
+		<mark>이름을 입력해주세요!</mark>
+		<br> <input type="text" name="username" size="20" /> <input
+			type="button" value="Enter" onclick="javascript:writeCheck()" />
 	</form>
-
+	<script type="text/javascript">
+		window.onload = function() {
+			var form = document.nameform;
+			form.username.focus();
+		}
+		function writeCheck() {
+			var form = document.nameform;
+			var f=form.username.value;
+			var pattern = /\s/g;
+			
+			if( f.match(pattern) || f.length < 1){
+				alert("이름을 적어주세요.");
+				form.username.focus();
+				return;
+			}
+			
+			form.submit();
+		}
+	</script>
 </body>
 </html>

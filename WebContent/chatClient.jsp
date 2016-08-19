@@ -34,7 +34,7 @@
 </body>
 <script type="text/javascript">
 	var textarea = document.getElementById("msg_push");
-	var webSocket = new WebSocket('ws://localhost:8080/project5/chatServer');
+	var webSocket = new WebSocket('ws://172.21.25.189:8080/project5/chatServer');
 	var inputMessage = document.getElementById("msg_input");
 	var sendE = document.getElementById("send");
 	// 메세지 입력후 엔터 누름

@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -27,8 +26,20 @@ public class chatServer {
 	@OnMessage
 	public void onMessage(String message, Session session) throws IOException {
 		System.out.println(message);
+		
+		String username=(String)session.getUserProperties().get("username");
+		if(username!=null){
+			synchronized (clients) {
+				for(Session client : clients) {
+					try{
+						if(!client.equals(session))
+							client.getBasicRemote().sendText(buildJsonData(username,message));
+					} catch(Exception e) { e.printStackTrace(); }
+				}
+			}
+		}
 		JSONObject obj = new JSONObject();
-		obj.put(session, message);
+		obj.put(username, message);
 		try {
 			BufferedWriter fw = new BufferedWriter(new FileWriter("C:\\myJson.json", true));
 			fw.write(obj.toJSONString());
@@ -39,23 +50,12 @@ public class chatServer {
 			e.printStackTrace();
 		}
 		System.out.println("Create JSON Object : " + obj);
-		//String username=(String)session.getUserProperties().get("username");
-		//if(username!=null){
-			synchronized (clients) {
-				for(Session client : clients) {
-					try{
-						if(!client.equals(session))
-							client.getBasicRemote().sendText(message);
-					} catch(Exception e) { e.printStackTrace(); }
-				}
-			}
-		//}
 	}
 
 	@OnOpen
 	public void onOpen(EndpointConfig endpointConfig, Session session) {
 		System.out.println("¿ÀÇÂ : " + session);
-		//session.getUserProperties().put("username", endpointConfig.getUserProperties().get("username"));
+		session.getUserProperties().put("username", endpointConfig.getUserProperties().get("username"));
 		clients.add(session);
 		
 	}
@@ -66,6 +66,16 @@ public class chatServer {
 		clients.remove(session);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public String buildJsonData(String username,String message){
+   	
+		JSONObject obj = new JSONObject();
+		obj.put("message", username + " : " + message);
+		//System.out.println("json string : " + obj.toJSONString());
+		return obj.toJSONString();
+		
+    }
+
 
 
 }
