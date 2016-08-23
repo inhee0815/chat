@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+</head>
+<body>
+	<fieldset>
+		<textarea id="messageWindow" rows="10" cols="50"></textarea>
+		<br /> <input id="inputMessage" type="text" /> <input type="submit"
+			value="send" onclick="javascript:send()" /><br />
+		<textarea id="messageWindow" rows="10" cols="50" readonly="true"></textarea>
+
+
+	</fieldset>
+</body>
+<script type="text/javascript">
+	function send() {
+		var pattern1 = /\s+/; //왼쪽 공백제거
+		var pattern2 = /\s+$/g;//오른쪽 공백제거
+		var pattern3 = /\n/g;//행바꿈제거
+		var pattern4 = /\r/g;//엔터제거
+		var pattern5 = /\s/g;//문자열 내의 모든 공백 제거
+		var pattern6= /^\s+|\s+$/g;
+		var str = document.getElementById("messageWindow").value;
+		var n = str.replace(pattern6,"");
+		alert(n);
+
+	}
+</script>
+
+</html>
