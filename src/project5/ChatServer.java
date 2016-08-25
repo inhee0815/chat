@@ -31,36 +31,36 @@ public class ChatServer {
 	java.util.Date d = new java.util.Date();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
 
-	// session : Á¢¼ÓÀÚ¸¶´Ù ÇÑ°³ÀÇ ¼¼¼ÇÀÌ »ı¼ºµÇ¾î µ¥ÀÌÅÍ Åë½Å¼ö´ÜÀ¸·Î »ç¿ë
-	// ÇÑ°³ÀÇ ºê¶ó¿ìÀú¿¡¼­ ¿©·¯°³ÀÇ ÅÇÀ» »ç¿ëÇØ¼­ Á¢¼ÓÇÏ¸é sessionÀº ¼­·Î ´Ù¸£Áö¸¸ httpsessionÀº µ¿ÀÏ
+	// session : ì ‘ì†ìë§ˆë‹¤ í•œê°œì˜ ì„¸ì…˜ì´ ìƒì„±ë˜ì–´ ë°ì´í„° í†µì‹ ìˆ˜ë‹¨ìœ¼ë¡œ ì‚¬ìš©
+	// í•œê°œì˜ ë¸Œë¼ìš°ì €ì—ì„œ ì—¬ëŸ¬ê°œì˜ íƒ­ì„ ì‚¬ìš©í•´ì„œ ì ‘ì†í•˜ë©´ sessionì€ ì„œë¡œ ë‹¤ë¥´ì§€ë§Œ httpsessionì€ ë™ì¼
 	@SuppressWarnings("unchecked")
 	@OnMessage
 	public void onMessage(String message, Session session) throws IOException {
 		System.out.println(message);
 
-		String username = (String) session.getUserProperties().get("username"); // ¼­¹ö¿Í
-																				// ¿¬°áµÇ¾î
-																				// ÀÖ´Â
-																				// Á¤º¸
-																				// °¡Á®¿È
+		String username = (String) session.getUserProperties().get("username"); // ì„œë²„ì™€
+																				// ì—°ê²°ë˜ì–´
+																				// ìˆëŠ”
+																				// ì •ë³´
+																				// ê°€ì ¸ì˜´
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
 		if (username != null) {
-			synchronized (clients) { // Á¢¼Ó ÁßÀÎ ¸ğµç ÀÌ¿ëÀÚ¿¡°Ô ¸Ş½ÃÁö¸¦ Àü¼ÛÇÑ´Ù.
+			synchronized (clients) { // ì ‘ì† ì¤‘ì¸ ëª¨ë“  ì´ìš©ìì—ê²Œ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•œë‹¤.
 				for (Session client : clients) {
 					try {
 						if (!client.equals(session))
 							client.getBasicRemote().sendText(buildJsonData(username, message));
-						// getBasicRemote() : °´Ã¼¸¦ ±¸ÇÏ°í
-						// sendText() : ÅØ½ºÆ®¸¦ ´õÇÑ´Ù.
-						// ¸Ş½ÃÁö Àü¼ÛÀÌ ¼º°øÇÒ ¶§±îÁö °è¼Ó ·çÇÁ¸¦ µ·´Ù.
-						// °á±¹ ÀÌ¿ëÀÚ¿¡°Ô ¸Ş½ÃÁö¸¦ º¸³»°í¾ß ¸¸´Ù.
+						// getBasicRemote() : ê°ì²´ë¥¼ êµ¬í•˜ê³ 
+						// sendText() : í…ìŠ¤íŠ¸ë¥¼ ë”í•œë‹¤.
+						// ë©”ì‹œì§€ ì „ì†¡ì´ ì„±ê³µí•  ë•Œê¹Œì§€ ê³„ì† ë£¨í”„ë¥¼ ëˆë‹¤.
+						// ê²°êµ­ ì´ìš©ìì—ê²Œ ë©”ì‹œì§€ë¥¼ ë³´ë‚´ê³ ì•¼ ë§Œë‹¤.
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		} else {
-			// username ¼öÁ¤ Ã³¸®
+			// username ìˆ˜ì • ì²˜ë¦¬
 		}
 		JSONObject obj = new JSONObject();
 		obj.put(username, message);
@@ -78,7 +78,7 @@ public class ChatServer {
 			Connection conn = getConnection();
 			String sql = "INSERT INTO chat (message, reg_date, ipAddress) VALUES (?,?,?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, message);
+			pstmt.setString(1, username + " : " + message);
 			pstmt.setString(2, sdf.format(d));
 			pstmt.setString(3, ipAddress);
 			pstmt.executeUpdate();
@@ -99,7 +99,7 @@ public class ChatServer {
 	@OnOpen
 	public void onOpen(EndpointConfig endpointConfig, Session session) {
 		ArrayList<String> data = new ArrayList<String>();
-		System.out.println("¿ÀÇÂ : " + session);
+		System.out.println("ì˜¤í”ˆ : " + session);
 		session.getUserProperties().put("username", endpointConfig.getUserProperties().get("username"));
 		session.getUserProperties().put("ipAddress", endpointConfig.getUserProperties().get("ipAddress"));
 		clients.add(session);
@@ -110,34 +110,34 @@ public class ChatServer {
 
 		try {
 			Connection conn = getConnection();
-			String sql = "INSERT INTO person (ipAddress, username) VALUES (?,?)"; // »ç¿ëÀÚ
-																					// Á¤º¸
-																					// Å×ÀÌºí¿¡
-																					// Á¤º¸
-																					// ÀÔ·Â
-			String sql2 = "INSERT INTO temp(session_id,ipAddress,fk_num) VALUES (?,?,?)"; // openÇßÀ»
-																							// ¶§
-																							// ´ëÈ­³»¿ë
+			String sql = "INSERT INTO person (ipAddress, username) VALUES (?,?)"; // ì‚¬ìš©ì
+																					// ì •ë³´
+																					// í…Œì´ë¸”ì—
+																					// ì •ë³´
+																					// ì…ë ¥
+			String sql2 = "INSERT INTO temp(session_id,ipAddress,fk_num) VALUES (?,?,?)"; // opení–ˆì„
+																							// ë•Œ
+																							// ëŒ€í™”ë‚´ìš©
 																							// row
-																							// ³Ñ¹ö
-																							// ÀúÀå
-			String sql3 = "SELECT * FROM person"; // »ç¿ëÀÚ Á¤º¸ Å×ÀÌºí ÀĞ±â
-			String sql4 = "SELECT * FROM chat order by num desc limit 1"; // ´ëÈ­³»¿ë
-																			// ¸ñ·Ï
+																							// ë„˜ë²„
+																							// ì €ì¥
+			String sql3 = "SELECT * FROM person"; // ì‚¬ìš©ì ì •ë³´ í…Œì´ë¸” ì½ê¸°
+			String sql4 = "SELECT * FROM chat order by num desc limit 1"; // ëŒ€í™”ë‚´ìš©
+																			// ëª©ë¡
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			PreparedStatement nstmt = conn.prepareStatement(sql2);
 			PreparedStatement mtmt = conn.prepareStatement(sql3);
-			PreparedStatement stmt = conn.prepareStatement(sql4); // ´ëÈ­³»¿ë row ³Ñ¹ö
-																	// ÀĞ¾î¿Í¼­ ±×
-																	// ´ÙÀ½ºÎÅÍ Âß
-																	// º¸¿©ÁÖ±â
+			PreparedStatement stmt = conn.prepareStatement(sql4); // ëŒ€í™”ë‚´ìš© row ë„˜ë²„
+																	// ì½ì–´ì™€ì„œ ê·¸
+																	// ë‹¤ìŒë¶€í„° ì­‰
+																	// ë³´ì—¬ì£¼ê¸°
 
 			ResultSet mrs = mtmt.executeQuery();
 			ResultSet srs = stmt.executeQuery();
 			while (mrs.next()) {
-				if (ipAddress.equals(mrs.getString("ipAddress"))) // ip ÁÖ¼Ò°¡ ÀÖÀ¸¸é ¸®½ºÆ® º¸¿©Áà¾ßÁö
+				if (ipAddress.equals(mrs.getString("ipAddress"))) // ip ì£¼ì†Œê°€ ìˆìœ¼ë©´ ë¦¬ìŠ¤íŠ¸ ë³´ì—¬ì¤˜ì•¼ì§€
 				{
-					if(srs.next()){ //Å×ÀÌºí¿¡ ´ëÈ­ ³»¿ëÀÌ ÀÖÀ¸¸é
+					if(srs.next()){ //í…Œì´ë¸”ì— ëŒ€í™” ë‚´ìš©ì´ ìˆìœ¼ë©´
 						int idx=Integer.parseInt(srs.getString("num")) + 1;
 						nstmt.setString(1, sessionId);
 						nstmt.setString(2, ipAddress);
@@ -152,11 +152,16 @@ public class ChatServer {
 								+ ipAddress + "\"";
 						System.out.println("sql5 : " + sql5);
 						PreparedStatement astmt = conn.prepareStatement(sql5);
+						
 						ResultSet ars = astmt.executeQuery();
+						
+						List<String> list = new ArrayList<String>();
+
 						while (ars.next()) {
 							int num = ars.getInt("num");
 							String message = ars.getString("message");
 							System.out.println(num + " : " + message);
+							list.add(message);
 						}
 						isUpdated=true;
 						astmt.close();
@@ -167,8 +172,8 @@ public class ChatServer {
 					}
 				}
 			}
-			if(isUpdated==false){ //ip ÁÖ¼Ò°¡ ¾ø´Ù. »õ·Î µé¾î¿Ô³×?
-				if (srs.next()) { // Å×ÀÌºí¿¡ ´ëÈ­³»¿ë ÀÖÀ¸¸é
+			if(isUpdated==false){ //ip ì£¼ì†Œê°€ ì—†ë‹¤. ìƒˆë¡œ ë“¤ì–´ì™”ë„¤?
+				if (srs.next()) { // í…Œì´ë¸”ì— ëŒ€í™”ë‚´ìš© ìˆìœ¼ë©´
 					int num = Integer.parseInt(srs.getString("num")) + 1;
 					pstmt.setString(1, ipAddress);
 					pstmt.setString(2, username);
@@ -211,14 +216,14 @@ public class ChatServer {
 				for (Session client : clients) {
 					try {
 						if (!client.equals(session))
-							client.getBasicRemote().sendText(buildJsonData2(username, "´ÔÀÌ ÅğÀåÇß½À´Ï´Ù."));
+							client.getBasicRemote().sendText(buildJsonData2(username, "ë‹˜ì´ í‡´ì¥í–ˆìŠµë‹ˆë‹¤."));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
-		System.out.println("Å¬·ÎÁî : " + session);
+		System.out.println("í´ë¡œì¦ˆ : " + session);
 		clients.remove(session);
 
 	}
