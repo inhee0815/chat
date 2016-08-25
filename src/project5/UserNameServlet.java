@@ -95,8 +95,6 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("document.getElementById('msg_body').appendChild(div);");
 			printWriter.println("webSocket.send(inputMessage.value);");
 			printWriter.println("inputMessage.value = \"\";");
-			printWriter.println("var d = document.getElementById(\"msg_body\");");
-			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("}");
 			printWriter.println("}");
 			printWriter.println("};");
