@@ -78,7 +78,7 @@ public class ChatServer {
 			Connection conn = getConnection();
 			String sql = "INSERT INTO chat (message, reg_date, ipAddress) VALUES (?,?,?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, message);
+			pstmt.setString(1, username + " : " + message);
 			pstmt.setString(2, sdf.format(d));
 			pstmt.setString(3, ipAddress);
 			pstmt.executeUpdate();
@@ -98,7 +98,7 @@ public class ChatServer {
 
 	@OnOpen
 	public void onOpen(EndpointConfig endpointConfig, Session session) {
-		ArrayList<String> data = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<String>();
 		System.out.println("오픈 : " + session);
 		session.getUserProperties().put("username", endpointConfig.getUserProperties().get("username"));
 		session.getUserProperties().put("ipAddress", endpointConfig.getUserProperties().get("ipAddress"));
@@ -107,7 +107,6 @@ public class ChatServer {
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
 		String sessionId = (String) session.toString();
 		boolean isUpdated = false;
-
 		try {
 			Connection conn = getConnection();
 			String sql = "INSERT INTO person (ipAddress, username) VALUES (?,?)"; // 사용자
@@ -122,12 +121,12 @@ public class ChatServer {
 																							// 넘버
 																							// 저장
 			String sql3 = "SELECT * FROM person"; // 사용자 정보 테이블 읽기
-			String sql4 = "SELECT * FROM chat order by num desc limit 1"; // 대화내용
+			String sql4 = "SELECT * FROM chat";// 대화내용
 																			// 목록
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			PreparedStatement nstmt = conn.prepareStatement(sql2);
 			PreparedStatement mtmt = conn.prepareStatement(sql3);
-			PreparedStatement stmt = conn.prepareStatement(sql4); // 대화내용 row 넘버
+			PreparedStatement stmt = conn.prepareStatement(sql4 + " order by num desc limit 1"); // 대화내용 row 넘버
 																	// 읽어와서 그
 																	// 다음부터 쭉
 																	// 보여주기
@@ -137,37 +136,38 @@ public class ChatServer {
 			while (mrs.next()) {
 				if (ipAddress.equals(mrs.getString("ipAddress"))) // ip 주소가 있으면 리스트 보여줘야지
 				{
-					if(srs.next()){ //테이블에 대화 내용이 있으면
-						int idx=Integer.parseInt(srs.getString("num")) + 1;
-						nstmt.setString(1, sessionId);
-						nstmt.setString(2, ipAddress);
-						nstmt.setInt(3, idx);
-						nstmt.executeUpdate();
-						String sql6 = "UPDATE temp SET session_id='" + sessionId + "'";
+					//if(srs.next()){ //테이블에 대화 내용이 있으면
+						String sql6 = "UPDATE temp SET session_id='" + sessionId + "' where ipAddress=\"" + ipAddress + "\"";
 						System.out.println("sql6 : " + sql6);
 						PreparedStatement bstmt = conn.prepareStatement(sql6);
 						bstmt.executeUpdate(sql6);
+						String sql7 = "UPDATE person SET username='" + username + "' where ipAddress=\"" + ipAddress + "\"";
+						System.out.println("sql7 : " + sql7);
+						PreparedStatement cstmt = conn.prepareStatement(sql7);
+						cstmt.executeUpdate(sql7);
 						
-						String sql5 = "SELECT chat.num,chat.message FROM chat, temp where chat.num > temp.fk_num and chat.ipAddress=\"" 
-								+ ipAddress + "\"";
+						String sql5 = "SELECT chat.num,chat.message FROM chat, temp where chat.num >= temp.fk_num and temp.ipAddress=\"" + ipAddress + "\"";
 						System.out.println("sql5 : " + sql5);
 						PreparedStatement astmt = conn.prepareStatement(sql5);
 						ResultSet ars = astmt.executeQuery();
 						while (ars.next()) {
 							int num = ars.getInt("num");
 							String message = ars.getString("message");
-							System.out.println(num + " : " + message);
+							//System.out.println(num + " : " + message);
+							list.add(message);
 						}
 						isUpdated=true;
 						astmt.close();
 						bstmt.close();
+						cstmt.close();
 						break;
-					} else {
+					//} else {
 						///
-					}
+					//}
 				}
 			}
 			if(isUpdated==false){ //ip 주소가 없다. 새로 들어왔네?
+				System.out.println("ip 주소 없지");
 				if (srs.next()) { // 테이블에 대화내용 있으면
 					int num = Integer.parseInt(srs.getString("num")) + 1;
 					pstmt.setString(1, ipAddress);
@@ -186,7 +186,10 @@ public class ChatServer {
 				pstmt.executeUpdate();
 				nstmt.executeUpdate();
 			}
-
+			for (int i = 0; i < list.size(); i++) {
+				String msg = list.get(i);
+				System.out.println(msg);
+			}
 			pstmt.close();
 			nstmt.close();
 			mtmt.close();
@@ -241,6 +244,14 @@ public class ChatServer {
 		// System.out.println("json string : " + obj.toJSONString());
 		return obj.toJSONString();
 
+	}
+
+	public ArrayList<String>getArrayList(String msg)
+	{
+		ArrayList<String> list = new ArrayList<String>();
+		list.add(msg);
+		return (list);
+		
 	}
 
 	public Connection getConnection() throws Exception {

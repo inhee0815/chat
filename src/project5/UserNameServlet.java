@@ -2,6 +2,7 @@ package project5;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,8 +25,11 @@ public class UserNameServlet extends HttpServlet {
 		HttpSession httpSession = request.getSession(true);
 		String username = request.getParameter("username");
 		String ipAddress=request.getRemoteAddr();
+
+		
 		httpSession.setAttribute("username", username); //session¿¡ Á¢±Ù
 		httpSession.setAttribute("ipAddress", ipAddress);
+		//httpSession.setAttribute("chatList", list);
 		if (username != null) {
 			/*
 			 * RequestDispatcher rd;
@@ -50,8 +54,8 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("</div>");
 			printWriter.println("</body>");
 			printWriter.println("<script>");
-			//printWriter.println("var webSocket = new WebSocket(\"ws://172.21.25.189:8080/project5/ChatServer\");");
-			printWriter.println("var webSocket = new WebSocket(\"ws://localhost:8080/project5/ChatServer\");");
+			printWriter.println("var webSocket = new WebSocket(\"ws://172.21.25.189:8080/project5/ChatServer\");");
+			//printWriter.println("var webSocket = new WebSocket(\"ws://localhost:8080/project5/ChatServer\");");
 			printWriter.println("var inputMessage = document.getElementById(\"msg_input\");");
 			printWriter.println("var sendE = document.getElementById(\"send\");");
 			printWriter.println("webSocket.onerror = function(event) {");
