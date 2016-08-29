@@ -2,7 +2,10 @@ package project5;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +28,7 @@ public class UserNameServlet extends HttpServlet {
 		HttpSession httpSession = request.getSession(true);
 		String username = request.getParameter("username");
 		String ipAddress=request.getRemoteAddr();
+		Connection conn=null;
 
 		
 		httpSession.setAttribute("username", username); //session¿¡ Á¢±Ù
@@ -113,6 +117,52 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("}");
 			printWriter.println("}");
 			printWriter.println("function onOpen(event) {");
+			try{
+			    conn=ChatServer.getConnection();
+			    
+			    if(ChatServer.isUpdated==true){
+			     String sql5 = "SELECT chat.num,chat.message,chat.ipAddress FROM chat, temp where chat.num >= temp.fk_num and temp.ipAddress=\"" + ipAddress + "\"";
+			     System.out.println("sql5 : " + sql5);
+			     PreparedStatement astmt = conn.prepareStatement(sql5);
+			     
+			     ResultSet ars = astmt.executeQuery();
+			     while (ars.next()) {
+			      int num = ars.getInt("num");
+			      String message = ars.getString("message");
+			      String addr = ars.getString("ipAddress");
+			      
+			      printWriter.println("var input=\"\"");
+			      printWriter.println("var div = document.createElement('div');");
+			     
+			      if(addr.equals(ipAddress)){
+			    	  printWriter.println("div.id='msg_b';");
+			    	  printWriter.println("div.className='msg_b';");
+			    	  printWriter.println("input+=" + num + ";");
+			    	  printWriter.println("div.innerHTML =\"" + message + "\";");
+			    	  printWriter.println("document.getElementById('msg_body').appendChild(div);");
+		
+			     } else {
+			    	 printWriter.println("div.id='msg_a';");
+			    	 printWriter.println("div.className='msg_a';");
+			      	 printWriter.println("div.innerHTML =\"" + message + "\";");
+			      	 printWriter.println("document.getElementById('msg_body').appendChild(div);");
+			     }
+			     }
+			    }
+			   
+			  }catch(Exception e){
+			   System.out.println(e.toString());
+			  }finally{
+			   try {
+			    conn.close();
+			    
+			   } catch (SQLException e) {
+			    // TODO Auto-generated catch block
+			    e.printStackTrace();
+			   }
+			  }
+			  
+
 			/*printWriter.println("var div = document.createElement('div');");
 			printWriter.println("var jsonData = JSON.parse(event.data);");
 			printWriter.println("div.id='msg_push';");
@@ -140,7 +190,9 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("obj.style.height = (20+obj.scrollHeight)+\"px\";");
 			printWriter.println("}");
 			printWriter.println("function button_close() {");
-			printWriter.println("alert(\"´Ý±â\");");
+			
+			
+			//printWriter.println("alert(\"´Ý±â\");");
 			printWriter.println("}");
 
 
