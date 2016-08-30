@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,7 +30,7 @@ public class UserNameServlet extends HttpServlet {
 		String username = request.getParameter("username");
 		String ipAddress=request.getRemoteAddr();
 		Connection conn=null;
-
+		HashMap<Integer , String> map = new HashMap<Integer , String>();
 		
 		httpSession.setAttribute("username", username); //session에 접근
 		httpSession.setAttribute("ipAddress", ipAddress);
@@ -91,7 +92,7 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("event.returnValue = false;");  
 			printWriter.println("}");*/
 			printWriter.println("if (event.keyCode == 13) {");
-			printWriter.println("event.preventDefault();");
+			printWriter.println("event.preventDefault();"); //줄바꿈 막음
 			printWriter.println("var temp =inputMessage.value;");
 			printWriter.println("var pattern6= /^\\s+|\\s+$/g;");
 			printWriter.println("inputMessage.value=temp.replace(pattern6,\"\");");
@@ -124,12 +125,12 @@ public class UserNameServlet extends HttpServlet {
 			     String sql5 = "SELECT chat.num,chat.message,chat.ipAddress FROM chat, temp where chat.num >= temp.fk_num and temp.ipAddress=\"" + ipAddress + "\"";
 			     System.out.println("sql5 : " + sql5);
 			     PreparedStatement astmt = conn.prepareStatement(sql5);
-			     
 			     ResultSet ars = astmt.executeQuery();
 			     while (ars.next()) {
 			      int num = ars.getInt("num");
 			      String message = ars.getString("message");
 			      String addr = ars.getString("ipAddress");
+			      map.put(num,message);
 			      
 			      printWriter.println("var input=\"\"");
 			      printWriter.println("var div = document.createElement('div');");
@@ -147,6 +148,15 @@ public class UserNameServlet extends HttpServlet {
 			      	 printWriter.println("div.innerHTML =\"" + message + "\";");
 			      	 printWriter.println("document.getElementById('msg_body').appendChild(div);");
 			     }
+
+			      printWriter.println("div.ondblclick=function() {");
+			      printWriter.println("var retVal = confirm(\"선택한 메시지를 삭제하시겠습니까?\");");
+			      printWriter.println("if (retVal == true) {");
+			      printWriter.println("alert(" + num + ");");
+			      map.remove(num);
+			      printWriter.println("}");	
+			      printWriter.println("}");
+			      
 			     }
 			    }
 			   
@@ -194,8 +204,6 @@ public class UserNameServlet extends HttpServlet {
 			
 			//printWriter.println("alert(\"닫기\");");
 			printWriter.println("}");
-
-
 			printWriter.println("</script>");
 			printWriter.println("</html>");
 
