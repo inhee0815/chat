@@ -133,7 +133,7 @@ public class ChatServer {
 			 nstmt = conn.prepareStatement(sql2);
 			 mtmt = conn.prepareStatement(sql3);
 			 stmt = conn.prepareStatement(sql4 + " order by num desc limit 1"); // 대화내용 row 넘버
-																	// 읽어와서 그
+																	 // 읽어와서 그
 																	// 다음부터 쭉
 																	// 보여주기
 
