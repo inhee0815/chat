@@ -133,16 +133,16 @@ public class ChatServer {
 			 nstmt = conn.prepareStatement(sql2);
 			 mtmt = conn.prepareStatement(sql3);
 			 stmt = conn.prepareStatement(sql4 + " order by num desc limit 1"); // 대화내용 row 넘버
-																	 // 읽어와서 그
+																	// 읽어와서 그
 																	// 다음부터 쭉
-																	// 보여주기
+																	//  보여주기
 
 			 mrs = mtmt.executeQuery();
 			 srs = stmt.executeQuery();
 			while (mrs.next()) {
 				System.out.println("ipAddress = " + ipAddress + ", mrs.getString = " + mrs.getString("ipAddress"));
 				if (ipAddress.equals(mrs.getString("ipAddress"))) // 
-			    {
+			    { 
 			     System.out.println("아이피 같아요");
 			     isUpdated=true;
 			     break;
