@@ -1,5 +1,7 @@
 package project5;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -26,11 +28,12 @@ import javax.websocket.server.ServerEndpoint;
 import org.json.simple.JSONObject;
 
 @ServerEndpoint(value = "/ChatServer", configurator = ChatRoom.class)
-public class ChatServer {
+public class ChatServer{
 	private static Set<Session> clients = Collections.synchronizedSet(new HashSet<Session>());
 	java.util.Date d = new java.util.Date();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
 	static boolean isUpdated = false;
+	static boolean isClicked = false;
 	// session : 접속자마다 한개의 세션이 생성되어 데이터 통신수단으로 사용
 	// 한개의 브라우저에서 여러개의 탭을 사용해서 접속하면 session은 서로 다르지만 httpsession은 동일
 	@SuppressWarnings("unchecked")
@@ -44,6 +47,7 @@ public class ChatServer {
 																				// 정보
 																				// 가져옴
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
+		
 		if (username != null) {
 			synchronized (clients) { // 접속 중인 모든 이용자에게 메시지를 전송한다.
 				for (Session client : clients) {
@@ -105,6 +109,18 @@ public class ChatServer {
 		clients.add(session);
 		String username = (String) session.getUserProperties().get("username");
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
+		if (username != null) {
+			synchronized (clients) {
+				for (Session client : clients) {
+					try {
+						if (!client.equals(session))
+							client.getBasicRemote().sendText(buildJsonData2(username, "님이 입장했습니다."));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 		String sessionId = (String) session.toString();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -227,14 +243,6 @@ public class ChatServer {
 
 	}
 
-	public ArrayList<String>getArrayList(String msg)
-	{
-		ArrayList<String> list = new ArrayList<String>();
-		list.add(msg);
-		return (list);
-		
-	}
-
 	/*public static Connection getConnection() throws Exception {
 		Properties props = new Properties();
 		String path = ChatServer.class.getResource("db.properties").getPath();
@@ -270,6 +278,9 @@ public class ChatServer {
 	 System.out.println("Connected"); return conn;
 	 
 	 } catch (Exception e) { System.out.println(e); } return null; }
-	 
+
+	
+
+	
 
 }

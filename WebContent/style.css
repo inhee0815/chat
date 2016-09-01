@@ -156,4 +156,11 @@ body {
 	border-color: transparent transparent transparent #fcf20f;
 	right: -20px;
 	top: 7px;
+
+}
+.hidden {
+	width:1px;
+	height:1px;
+	border:0;
+
 }

@@ -1,12 +1,12 @@
 package project5;
 
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,27 +23,36 @@ public class UserNameServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.setCharacterEncoding("UTF-8"); 
-		response.setContentType("text/html; charset=UTF-8"); 
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter printWriter = response.getWriter();
 		HttpSession httpSession = request.getSession(true);
 		String username = request.getParameter("username");
-		String ipAddress=request.getRemoteAddr();
-		Connection conn=null;
-		HashMap<Integer , String> map = new HashMap<Integer , String>();
-		
-		httpSession.setAttribute("username", username); //session에 접근
+		String ipAddress = request.getRemoteAddr();
+		Connection conn = null;
+		int num = 0;
+		String message = null;
+		String addr = null;
+		String remove_chk = null;
+		httpSession.setAttribute("username", username); // session에 접근
 		httpSession.setAttribute("ipAddress", ipAddress);
-		//httpSession.setAttribute("chatList", list);
+		// httpSession.setAttribute("chatList", list);
 		if (username != null) {
+
 			/*
 			 * RequestDispatcher rd;
 			 * rd=getServletContext().getRequestDispatcher("/chatClient");
 			 * rd.forward(request,response);DDD
 			 */
 			printWriter.println("<html>");
-			printWriter.println("<head><link href=\"style.css?<?=filemtime('style.css')?>\" rel=\"stylesheet\" type=\"text/css\"></head>");
+			printWriter.println(
+					"<head><link href=\"style.css?<?=filemtime('style.css')?>\" rel=\"stylesheet\" type=\"text/css\"></head>");
 			printWriter.println("<body>");
+			printWriter.println("<form id=\"frm\" method=\"post\" enctype=\"multipart/form-data\" action=\"img.jsp\">");
+			printWriter.println("<input name=\"Filedata\" class=\"upload\" id=\"uploadInputBox\" type=\"file\" />");
+			printWriter.println("<input type=\"submit\" value=\"전송\" onclick=\"javascript:imgUp();\"/>");
+			printWriter.println("<iframe id=\"ifr\" name=\"ifr\" style=\"display:none;\"></iframe>");
+			printWriter.println("</form>");
 			printWriter.println("<mark>username:" + username + "</mark><br>");
 			printWriter.println("<div class=\"msg_box\" style=\"right: 290px\">");
 			printWriter.println("<div style=\"color:black; text-align:center;\" class=\"msg_head\">비즈커머스개발팀");
@@ -59,8 +68,62 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("</div>");
 			printWriter.println("</body>");
 			printWriter.println("<script>");
+			try {
+				conn = ChatServer.getConnection();
+
+				if (ChatServer.isUpdated == true) {
+					remove_chk = " chat.num not in(select rmv_num from remove where ipAddress=\"" + ipAddress
+							+ "\") and ";
+					String sql5 = "SELECT chat.num,chat.message,chat.ipAddress FROM chat, temp where" + remove_chk
+							+ "chat.num >= temp.fk_num and temp.ipAddress=\"" + ipAddress + "\"";
+					System.out.println("sql5 : " + sql5);
+					PreparedStatement astmt = conn.prepareStatement(sql5);
+					ResultSet ars = astmt.executeQuery();
+					while (ars.next()) {
+						num = ars.getInt("num");
+						message = ars.getString("message");
+						addr = ars.getString("ipAddress");
+
+						printWriter.println("var input=\"\"");
+						printWriter.println("var div = document.createElement('div');");
+
+						if (addr.equals(ipAddress)) {
+							printWriter.println("div.id='msg_b';");
+							printWriter.println("div.className='msg_b';");
+							printWriter.println("div.innerHTML =\"" + message + "\";");
+							printWriter.println("document.getElementById('msg_body').appendChild(div);");
+
+						} else {
+							printWriter.println("div.id='msg_a';");
+							printWriter.println("div.className='msg_a';");
+							printWriter.println("div.innerHTML =\"" + message + "\";");
+							printWriter.println("document.getElementById('msg_body').appendChild(div);");
+						}
+						printWriter.println("div.ondblclick = function() {");
+						printWriter.println("var retVal = confirm(\"선택한 메시지를 삭제하시겠습니까?\");");
+						printWriter.println("if (retVal == true) {");
+						printWriter.println("this.parentElement.removeChild(this);");
+						printWriter.println("msg_rmv(\"post\",\"send.jsp\"," + num + ");");
+						printWriter.println("} else {");
+						printWriter.println("return;");
+						printWriter.println("}");
+						printWriter.println("};");
+					}
+				}
+			} catch (Exception e) {
+				System.out.println(e.toString());
+			} finally {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 			printWriter.println("var webSocket = new WebSocket(\"ws://172.21.25.189:8080/project5/ChatServer\");");
-			//printWriter.println("var webSocket = new WebSocket(\"ws://localhost:8080/project5/ChatServer\");");
+			// printWriter.println("var webSocket = new
+			// WebSocket(\"ws://localhost:8080/project5/ChatServer\");");
 			printWriter.println("var inputMessage = document.getElementById(\"msg_input\");");
 			printWriter.println("var sendE = document.getElementById(\"send\");");
 			printWriter.println("webSocket.onerror = function(event) {");
@@ -84,18 +147,19 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("inputMessage.onkeydown = function(event) {");
 			printWriter.println("if (!event)");
 			printWriter.println("event = window.event;");
-			/*printWriter.println("if(event.keyCode==9) { ");
-			printWriter.println("inputMessage.focus();");
-			printWriter.println("var space = \"\\n\";"); 
-			printWriter.println("inputMessage.selection=document.body.createTextRange;"); 
-			printWriter.println("inputMessage.selection.text=space;"); 
-			printWriter.println("event.returnValue = false;");  
-			printWriter.println("}");*/
+			/*
+			 * printWriter.println("if(event.keyCode==9) { ");
+			 * printWriter.println("inputMessage.focus();");
+			 * printWriter.println("var space = \"\\n\";"); printWriter.println(
+			 * "inputMessage.selection=document.body.createTextRange;");
+			 * printWriter.println("inputMessage.selection.text=space;");
+			 * printWriter.println("event.returnValue = false;");
+			 * printWriter.println("}");
+			 */
 			printWriter.println("if (event.keyCode == 13) {");
-			printWriter.println("event.preventDefault();"); //줄바꿈 막음
-			printWriter.println("var temp =inputMessage.value;");
-			printWriter.println("var pattern6= /^\\s+|\\s+$/g;");
-			printWriter.println("inputMessage.value=temp.replace(pattern6,\"\");");
+			printWriter.println("event.preventDefault();"); // 줄바꿈 막음
+			printWriter.println("var str =inputMessage.value;");
+			printWriter.println("check(str);");
 			printWriter.println("if (inputMessage.value != \"\") {");
 			printWriter.println("var div = document.createElement('div');");
 			printWriter.println("div.id='msg_b';");
@@ -104,10 +168,21 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("document.getElementById('msg_body').appendChild(div);");
 			printWriter.println("webSocket.send(inputMessage.value);");
 			printWriter.println("inputMessage.value = \"\";");
+			printWriter.println("div.ondblclick = function() {");
+			printWriter.println("var retVal = confirm(\"선택한 메시지를 삭제하시겠습니까?\");");
+			printWriter.println("if (retVal == true) {");
+			printWriter.println("this.parentElement.removeChild(this);");
+			printWriter.println("msg_rmv(\"post\",\"send.jsp\", " + num + ");");
+			printWriter.println("} else {");
+			printWriter.println("return;");
+			printWriter.println("}");
+			printWriter.println("};");
 			printWriter.println("}");
 			printWriter.println("}");
 			printWriter.println("};");
 			printWriter.println("function onMessage(event) {");
+			printWriter.println("var count=0;");
+			printWriter.println("count++;");
 			printWriter.println("var div = document.createElement('div');");
 			printWriter.println("var jsonData = JSON.parse(event.data);");
 			printWriter.println("div.id='msg_a';");
@@ -115,72 +190,27 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("if(jsonData.message != null) {");
 			printWriter.println("div.innerHTML = jsonData.message;");
 			printWriter.println("document.getElementById('msg_body').appendChild(div);");
+			printWriter.println("div.ondblclick = function() {");
+			printWriter.println("var retVal = confirm(\"선택한 메시지를 삭제하시겠습니까?\");");
+			printWriter.println("if (retVal == true) {");
+			printWriter.println("this.parentElement.removeChild(this);");
+			printWriter.println("msg_rmv(\"post\",\"send.jsp\", " + num + ");");
+			printWriter.println("} else {");
+			printWriter.println("return;");
+			printWriter.println("}");
+			printWriter.println("};");
 			printWriter.println("}");
 			printWriter.println("}");
 			printWriter.println("function onOpen(event) {");
-			try{
-			    conn=ChatServer.getConnection();
-			    
-			    if(ChatServer.isUpdated==true){
-			     String sql5 = "SELECT chat.num,chat.message,chat.ipAddress FROM chat, temp where chat.num >= temp.fk_num and temp.ipAddress=\"" + ipAddress + "\"";
-			     System.out.println("sql5 : " + sql5);
-			     PreparedStatement astmt = conn.prepareStatement(sql5);
-			     ResultSet ars = astmt.executeQuery();
-			     while (ars.next()) {
-			      int num = ars.getInt("num");
-			      String message = ars.getString("message");
-			      String addr = ars.getString("ipAddress");
-			      map.put(num,message);
-			      
-			      printWriter.println("var input=\"\"");
-			      printWriter.println("var div = document.createElement('div');");
-			     
-			      if(addr.equals(ipAddress)){
-			    	  printWriter.println("div.id='msg_b';");
-			    	  printWriter.println("div.className='msg_b';");
-			    	  printWriter.println("input+=" + num + ";");
-			    	  printWriter.println("div.innerHTML =\"" + message + "\";");
-			    	  printWriter.println("document.getElementById('msg_body').appendChild(div);");
-		
-			     } else {
-			    	 printWriter.println("div.id='msg_a';");
-			    	 printWriter.println("div.className='msg_a';");
-			      	 printWriter.println("div.innerHTML =\"" + message + "\";");
-			      	 printWriter.println("document.getElementById('msg_body').appendChild(div);");
-			     }
-
-			      printWriter.println("div.ondblclick=function() {");
-			      printWriter.println("var retVal = confirm(\"선택한 메시지를 삭제하시겠습니까?\");");
-			      printWriter.println("if (retVal == true) {");
-			      printWriter.println("alert(" + num + ");");
-			      map.remove(num);
-			      printWriter.println("}");	
-			      printWriter.println("}");
-			      
-			     }
-			    }
-			   
-			  }catch(Exception e){
-			   System.out.println(e.toString());
-			  }finally{
-			   try {
-			    conn.close();
-			    
-			   } catch (SQLException e) {
-			    // TODO Auto-generated catch block
-			    e.printStackTrace();
-			   }
-			  }
-			  
-
-			/*printWriter.println("var div = document.createElement('div');");
+			printWriter.println("var div = document.createElement('div');");
 			printWriter.println("var jsonData = JSON.parse(event.data);");
 			printWriter.println("div.id='msg_push';");
 			printWriter.println("div.className='msg_push';");
 			printWriter.println("if(jsonData.message != null) {");
 			printWriter.println("div.innerHTML = jsonData.message;");
 			printWriter.println("document.getElementById('msg_body').appendChild(div);");
-			printWriter.println("}");*/
+			printWriter.println("}");
+
 			printWriter.println("}");
 			printWriter.println("function onClose(event) {");
 			printWriter.println("var div = document.createElement('div');");
@@ -200,9 +230,62 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("obj.style.height = (20+obj.scrollHeight)+\"px\";");
 			printWriter.println("}");
 			printWriter.println("function button_close() {");
-			
-			
-			//printWriter.println("alert(\"닫기\");");
+
+			printWriter.println("}");
+			printWriter.println("function check(str){");
+			printWriter.println("if( str.value == '' || str.value == null ){");
+			printWriter.println("alert( '값을 입력해주세요' );");
+			printWriter.println("return false;");
+			printWriter.println("}");
+			printWriter.println("var blank_pattern = /^\\s+|\\s+$/g;");
+			printWriter.println("if( str.value.replace( blank_pattern, '' ) == \"\") {");
+			printWriter.println("alert(' 공백만 입력되었습니다 ');");
+			printWriter.println("return false;");
+			printWriter.println("}");
+
+			printWriter.println("var blank_pattern = /[\\s]/g;");
+			printWriter.println("if( blank_pattern.test( str.value) == true){");
+			printWriter.println("alert(' 공백은 사용할 수 없습니다. ');");
+			printWriter.println("return false;");
+			printWriter.println("}");
+
+			printWriter.println("var special_pattern = /[`~!@#$%^&*|\\\\\'\";:\\/?]/gi;");
+			printWriter.println("if( special_pattern.test(str.value) == true ){");
+			printWriter.println("alert('특수문자는 사용할 수 없습니다.');");
+			printWriter.println("return false;");
+			printWriter.println("}");
+			printWriter.println("alert( '최종 : ' + str.value );");
+	
+			printWriter.println("}");
+			printWriter.println("function msg_rmv(method,path,num) {");
+			printWriter.println("alert(num);");
+			printWriter.println("var form = document.createElement(\"form\");");
+			printWriter.println("form.setAttribute(\"method\", method);");
+			printWriter.println("form.setAttribute(\"action\", path);");
+
+			printWriter.println("var hiddenNum = document.createElement(\"input\");");
+			printWriter.println("hiddenNum.setAttribute(\"type\", \"hidden\");");
+			printWriter.println("hiddenNum.setAttribute(\"name\", \"num\");");
+			printWriter.println("hiddenNum.setAttribute(\"value\", num);");
+			printWriter.println("var hiddenIp = document.createElement(\"input\");");
+			printWriter.println("hiddenIp.setAttribute(\"type\", \"hidden\");");
+			printWriter.println("hiddenIp.setAttribute(\"name\", \"ip\");");
+			printWriter.println("hiddenIp.setAttribute(\"value\", \"" + ipAddress + "\");");
+			printWriter.println("var iframe = document.createElement(\"iframe\");");
+			printWriter.println("iframe.setAttribute(\"id\", \"hidden\");");
+			printWriter.println("iframe.setAttribute(\"name\", \"hiddenifr\");");
+			printWriter.println("iframe.setAttribute(\"scr\", path);");
+			printWriter.println("form.appendChild(hiddenNum);");
+			printWriter.println("form.appendChild(hiddenIp);");
+			printWriter.println("document.body.appendChild(form);");
+			printWriter.println("document.body.appendChild(iframe);");
+			printWriter.println("form.target = \"hiddenifr\";");
+			printWriter.println("form.submit();");
+
+			printWriter.println("}");
+			printWriter.println("function imgUp(){");
+			printWriter.println("document.getElementById(\"frm\").target = \"ifr\";");
+			printWriter.println("return false;");
 			printWriter.println("}");
 			printWriter.println("</script>");
 			printWriter.println("</html>");
