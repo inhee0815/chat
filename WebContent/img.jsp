@@ -47,7 +47,7 @@ if(request.getContentLength() > 10*1024*1024 ){
 				<input type="hidden" name="filename" value="<%=filename%>">
 				<input type="hidden" name="path" value="<%=path%>">
 				<input type="hidden" name="fcode" value="<%=path%>">
-				<iframe id="iframe" name="iframe" scr=""style="display:none;"></iframe>
+				<iframe id="iframe" name="iframe" style="display:none;"></iframe>
 			</form>
 			<%
 		}
@@ -64,18 +64,10 @@ if(request.getContentLength() > 10*1024*1024 ){
 	    fname = f.filename.value; 
 	    fcode = fpath + fname;
 	    
-	   
-	    try{
-             window.opener.pasteHTML(fname); 
-	    	
-	    	 window.close();
-	    }catch(e){ 
-//             alert(e); 
-	    }
-
+	}
 	
 	fileAttach();
-	document.getElementById("fileform").target = "iframe";
-	"form.submit();
-	this.window.close();
+	var sHTML = '<%=request.getContextPath()%>/uploadFolder/' + fname;
+	var fHTML = '<img src=\"' +sHTML+ '\" height=\"100\" width=\"100\">';
+	parent.upload_img(sHTML,fHTML);
 </script>

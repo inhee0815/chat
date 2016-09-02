@@ -50,14 +50,14 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("<body>");
 			printWriter.println("<form id=\"frm\" method=\"post\" enctype=\"multipart/form-data\" action=\"img.jsp\">");
 			printWriter.println("<input name=\"Filedata\" class=\"upload\" id=\"uploadInputBox\" type=\"file\" />");
-			printWriter.println("<input type=\"submit\" value=\"전송\" onclick=\"javascript:imgUp();\"/>");
+			printWriter.println("<input type=\"submit\" value=\"전송\" onclick=\"imgUp();\"/>");
 			printWriter.println("<iframe id=\"ifr\" name=\"ifr\" style=\"display:none;\"></iframe>");
 			printWriter.println("</form>");
 			printWriter.println("<mark>username:" + username + "</mark><br>");
 			printWriter.println("<div class=\"msg_box\" style=\"right: 290px\">");
 			printWriter.println("<div style=\"color:black; text-align:center;\" class=\"msg_head\">비즈커머스개발팀");
 			printWriter.println("<div class=\"close\" onclick=\"button_close();\">X</div>");
-			printWriter.println("<div class=\"modify\">★</div></div>");
+			printWriter.println("<div class=\"emoji\" onclick=\"popupOpen();\">★</div></div>");
 			printWriter.println("<div class=\"msg_wrap\" style=\"display: block;\">");
 			printWriter.println("<div class=\"msg_body\" id=\"msg_body\">");
 			printWriter.println("</div>");
@@ -75,7 +75,8 @@ public class UserNameServlet extends HttpServlet {
 					remove_chk = " chat.num not in(select rmv_num from remove where ipAddress=\"" + ipAddress
 							+ "\") and ";
 					String sql5 = "SELECT chat.num,chat.message,chat.ipAddress FROM chat, temp where" + remove_chk
-							+ "chat.num >= temp.fk_num and temp.ipAddress=\"" + ipAddress + "\"";
+							+ "chat.num >= 584 and temp.ipAddress=\"" + ipAddress + "\"";
+					// temp.fk_num
 					System.out.println("sql5 : " + sql5);
 					PreparedStatement astmt = conn.prepareStatement(sql5);
 					ResultSet ars = astmt.executeQuery();
@@ -131,18 +132,12 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("};");
 			printWriter.println("webSocket.onopen = function(event) {");
 			printWriter.println("onOpen(event)");
-			printWriter.println("var d = document.getElementById(\"msg_body\");");
-			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("};");
 			printWriter.println("webSocket.onclose = function(event) {");
 			printWriter.println("onClose(event)");
-			printWriter.println("var d = document.getElementById(\"msg_body\");");
-			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("};");
 			printWriter.println("webSocket.onmessage = function(event) {");
 			printWriter.println("onMessage(event)");
-			printWriter.println("var d = document.getElementById(\"msg_body\");");
-			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("};");
 			printWriter.println("inputMessage.onkeydown = function(event) {");
 			printWriter.println("if (!event)");
@@ -156,16 +151,19 @@ public class UserNameServlet extends HttpServlet {
 			 * printWriter.println("event.returnValue = false;");
 			 * printWriter.println("}");
 			 */
+
 			printWriter.println("if (event.keyCode == 13) {");
 			printWriter.println("event.preventDefault();"); // 줄바꿈 막음
 			printWriter.println("var str =inputMessage.value;");
-			printWriter.println("check(str);");
 			printWriter.println("if (inputMessage.value != \"\") {");
 			printWriter.println("var div = document.createElement('div');");
 			printWriter.println("div.id='msg_b';");
 			printWriter.println("div.className='msg_b'");
-			printWriter.println("div.innerHTML = inputMessage.value;");
+
+			printWriter.println("div.innerHTML = ConvertSystemSourcetoHtml(inputMessage.value);");
 			printWriter.println("document.getElementById('msg_body').appendChild(div);");
+			printWriter.println("var d = document.getElementById(\"msg_body\");");
+			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("webSocket.send(inputMessage.value);");
 			printWriter.println("inputMessage.value = \"\";");
 			printWriter.println("div.ondblclick = function() {");
@@ -181,8 +179,6 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("}");
 			printWriter.println("};");
 			printWriter.println("function onMessage(event) {");
-			printWriter.println("var count=0;");
-			printWriter.println("count++;");
 			printWriter.println("var div = document.createElement('div');");
 			printWriter.println("var jsonData = JSON.parse(event.data);");
 			printWriter.println("div.id='msg_a';");
@@ -190,6 +186,8 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("if(jsonData.message != null) {");
 			printWriter.println("div.innerHTML = jsonData.message;");
 			printWriter.println("document.getElementById('msg_body').appendChild(div);");
+			printWriter.println("var d = document.getElementById(\"msg_body\");");
+			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("div.ondblclick = function() {");
 			printWriter.println("var retVal = confirm(\"선택한 메시지를 삭제하시겠습니까?\");");
 			printWriter.println("if (retVal == true) {");
@@ -202,6 +200,8 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("}");
 			printWriter.println("}");
 			printWriter.println("function onOpen(event) {");
+			printWriter.println("var d = document.getElementById(\"msg_body\");");
+			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("var div = document.createElement('div');");
 			printWriter.println("var jsonData = JSON.parse(event.data);");
 			printWriter.println("div.id='msg_push';");
@@ -209,6 +209,8 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("if(jsonData.message != null) {");
 			printWriter.println("div.innerHTML = jsonData.message;");
 			printWriter.println("document.getElementById('msg_body').appendChild(div);");
+			printWriter.println("var d = document.getElementById(\"msg_body\");");
+			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("}");
 
 			printWriter.println("}");
@@ -220,6 +222,8 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("if(jsonData.message != null) {");
 			printWriter.println("div.innerHTML = jsonData.message;");
 			printWriter.println("document.getElementById('msg_body').appendChild(div);");
+			printWriter.println("var d = document.getElementById(\"msg_body\");");
+			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
 			printWriter.println("}");
 			printWriter.println("}");
 			printWriter.println("function onError(event) {");
@@ -229,34 +233,10 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("obj.style.height = \"1px\";");
 			printWriter.println("obj.style.height = (20+obj.scrollHeight)+\"px\";");
 			printWriter.println("}");
-			printWriter.println("function button_close() {");
-
-			printWriter.println("}");
-			printWriter.println("function check(str){");
-			printWriter.println("if( str.value == '' || str.value == null ){");
-			printWriter.println("alert( '값을 입력해주세요' );");
-			printWriter.println("return false;");
-			printWriter.println("}");
-			printWriter.println("var blank_pattern = /^\\s+|\\s+$/g;");
-			printWriter.println("if( str.value.replace( blank_pattern, '' ) == \"\") {");
-			printWriter.println("alert(' 공백만 입력되었습니다 ');");
-			printWriter.println("return false;");
+			printWriter.println("function button_close(str) {");
+			printWriter.println("alert(\"Coming Soon..\");");
 			printWriter.println("}");
 
-			printWriter.println("var blank_pattern = /[\\s]/g;");
-			printWriter.println("if( blank_pattern.test( str.value) == true){");
-			printWriter.println("alert(' 공백은 사용할 수 없습니다. ');");
-			printWriter.println("return false;");
-			printWriter.println("}");
-
-			printWriter.println("var special_pattern = /[`~!@#$%^&*|\\\\\'\";:\\/?]/gi;");
-			printWriter.println("if( special_pattern.test(str.value) == true ){");
-			printWriter.println("alert('특수문자는 사용할 수 없습니다.');");
-			printWriter.println("return false;");
-			printWriter.println("}");
-			printWriter.println("alert( '최종 : ' + str.value );");
-	
-			printWriter.println("}");
 			printWriter.println("function msg_rmv(method,path,num) {");
 			printWriter.println("alert(num);");
 			printWriter.println("var form = document.createElement(\"form\");");
@@ -275,6 +255,7 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("iframe.setAttribute(\"id\", \"hidden\");");
 			printWriter.println("iframe.setAttribute(\"name\", \"hiddenifr\");");
 			printWriter.println("iframe.setAttribute(\"scr\", path);");
+			printWriter.println("iframe.setAttribute(\"style\", \"display:none;\");");
 			printWriter.println("form.appendChild(hiddenNum);");
 			printWriter.println("form.appendChild(hiddenIp);");
 			printWriter.println("document.body.appendChild(form);");
@@ -286,6 +267,41 @@ public class UserNameServlet extends HttpServlet {
 			printWriter.println("function imgUp(){");
 			printWriter.println("document.getElementById(\"frm\").target = \"ifr\";");
 			printWriter.println("return false;");
+			printWriter.println("}");
+			printWriter.println("function upload_img(addr,tag){");
+			printWriter.println("alert(addr);");
+			printWriter.println("alert(tag);");
+			printWriter.println("var div = document.createElement('div');");
+			printWriter.println("div.setAttribute(\"id\", \"msg_b\");");
+			printWriter.println("div.setAttribute(\"class\", \"msg_b\");");
+			printWriter.println("var img = document.createElement(\"img\");");
+			printWriter.println("img.setAttribute(\"src\", addr);");
+			printWriter.println("img.setAttribute(\"height\", \"100\");");
+			printWriter.println("img.setAttribute(\"width\", \"100\");");
+			printWriter.println("div.appendChild(img);");
+			printWriter.println("document.getElementById('msg_body').appendChild(div);");
+			printWriter.println("var d = document.getElementById(\"msg_body\");");
+			printWriter.println("d.scrollTop=d.scrollHeight-d.offsetHeight");
+			// printWriter.println("alert(\"<img src=\"+ str + \"height=\"100\"
+			// width=\"100\">);");
+			printWriter.println("webSocket.send(tag);");
+			printWriter.println("}");
+
+			printWriter.println("function popupOpen(){");
+			printWriter.println("var popUrl = \"test.html\";");
+			printWriter.println("var popOption = \"width=370, height=360, resizable=no, scrollbars=no, status=no;\";");
+			printWriter.println("window.open(popUrl,\"\",popOption);");
+			printWriter.println("}");
+
+			printWriter.println("function ConvertSystemSourcetoHtml(str){");
+			printWriter.println(" str = str.replace(\"\'\",\"\\'\");");
+			//printWriter.println(" str = str.replace(\"\"\",\"안녕\");");
+			/*printWriter.println("str = str.replace(/>/gi,\"&gt;\");");
+			printWriter.println("str = str.replace(/\\\"/gi,\"&quot;\");");
+			printWriter.println("str = str.replace(/\\\'/gi,\"&#39;\");");*/
+			//printWriter.println("str = str.replace(/\n/g,\"<br/>\");");
+			printWriter.println("alert(str);");
+			printWriter.println("return str;");
 			printWriter.println("}");
 			printWriter.println("</script>");
 			printWriter.println("</html>");

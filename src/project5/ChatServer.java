@@ -165,7 +165,7 @@ public class ChatServer{
 			    }
 			   }
 
-			if(isUpdated==false){ //ip 주소가 없다. 새로 들어왔네?
+			if(!isUpdated){ //ip 주소가 없다. 새로 들어왔네?
 				System.out.println("ip 주소 없지");
 				if (srs.next()) { // 테이블에 대화내용 있으면
 					int num = Integer.parseInt(srs.getString("num")) + 1;
