@@ -14,9 +14,20 @@
     <display-name>UserNameServlet</display-name>
     <servlet-name>UserNameServlet</servlet-name>
     <servlet-class>project5.UserNameServlet</servlet-class>
+    
+    </servlet>
+    <servlet>
+    <display-name>ChatListServlet</display-name>
+    <servlet-name>ChatListServlet</servlet-name>
+    <servlet-class>project5.ChatListServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>UserNameServlet</servlet-name>
     <url-pattern>/UserNameServlet</url-pattern>
+  </servlet-mapping>
+    
+  <servlet-mapping>
+    <servlet-name>ChatListServlet</servlet-name>
+    <url-pattern>/ChatListServlet</url-pattern>
   </servlet-mapping>
 </web-app>

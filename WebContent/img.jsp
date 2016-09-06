@@ -23,7 +23,7 @@ if(request.getContentLength() > 10*1024*1024 ){
 		
 		MultipartRequest multi=new MultipartRequest(request, path, 15*1024*1024, "UTF-8", new DefaultFileRenamePolicy());
 	
-		java.text.SimpleDateFormat formatter2 = new java.text.SimpleDateFormat ("yyyy_MM_dd_HHmmss", java.util.Locale.KOREA);
+		java.text.SimpleDateFormat formatter2 = new java.text.SimpleDateFormat ("yyyyMMddHHmmss", java.util.Locale.KOREA);
 		int cnt = 1;
 		String upfile = (multi.getFilesystemName("Filedata"));
 		if (!upfile.equals("")) {
@@ -68,6 +68,6 @@ if(request.getContentLength() > 10*1024*1024 ){
 	
 	fileAttach();
 	var sHTML = '<%=request.getContextPath()%>/uploadFolder/' + fname;
-	var fHTML = '<img src=\"' +sHTML+ '\" height=\"100\" width=\"100\">';
+	var fHTML = "<img src='"+sHTML+"' height='100' width='100'>";
 	parent.upload_img(sHTML,fHTML);
 </script>

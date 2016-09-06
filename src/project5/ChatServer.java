@@ -28,12 +28,12 @@ import javax.websocket.server.ServerEndpoint;
 import org.json.simple.JSONObject;
 
 @ServerEndpoint(value = "/ChatServer", configurator = ChatRoom.class)
-public class ChatServer{
+public class ChatServer {
 	private static Set<Session> clients = Collections.synchronizedSet(new HashSet<Session>());
 	java.util.Date d = new java.util.Date();
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	static boolean isUpdated = false;
-	static boolean isClicked = false;
+	
 	// session : 접속자마다 한개의 세션이 생성되어 데이터 통신수단으로 사용
 	// 한개의 브라우저에서 여러개의 탭을 사용해서 접속하면 session은 서로 다르지만 httpsession은 동일
 	@SuppressWarnings("unchecked")
@@ -47,7 +47,7 @@ public class ChatServer{
 																				// 정보
 																				// 가져옴
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
-		
+
 		if (username != null) {
 			synchronized (clients) { // 접속 중인 모든 이용자에게 메시지를 전송한다.
 				for (Session client : clients) {
@@ -83,7 +83,7 @@ public class ChatServer{
 			String sql = "INSERT INTO chat (message, reg_date, ipAddress) VALUES (?,?,?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, username + " : " + message);
-			pstmt.setString(2, sdf.format(d));
+			pstmt.setString(2, formatter.format(d));
 			pstmt.setString(3, ipAddress);
 			pstmt.executeUpdate();
 			pstmt.close();
@@ -102,7 +102,7 @@ public class ChatServer{
 
 	@OnOpen
 	public void onOpen(EndpointConfig endpointConfig, Session session) {
-		
+
 		System.out.println("오픈 : " + session);
 		session.getUserProperties().put("username", endpointConfig.getUserProperties().get("username"));
 		session.getUserProperties().put("ipAddress", endpointConfig.getUserProperties().get("ipAddress"));
@@ -144,28 +144,30 @@ public class ChatServer{
 																							// 저장
 			String sql3 = "SELECT * FROM person"; // 사용자 정보 테이블 읽기
 			String sql4 = "SELECT * FROM chat";// 대화내용
-																			// 목록
-			 pstmt = conn.prepareStatement(sql);
-			 nstmt = conn.prepareStatement(sql2);
-			 mtmt = conn.prepareStatement(sql3);
-			 stmt = conn.prepareStatement(sql4 + " order by num desc limit 1"); // 대화내용 row 넘버
-																	// 읽어와서 그
-																	// 다음부터 쭉
-																	//  보여주기
+												// 목록
+			pstmt = conn.prepareStatement(sql);
+			nstmt = conn.prepareStatement(sql2);
+			mtmt = conn.prepareStatement(sql3);
+			stmt = conn.prepareStatement(sql4 + " order by num desc limit 1"); // 대화내용
+																				// row
+																				// 넘버
+			// 읽어와서 그
+			// 다음부터 쭉
+			// 보여주기
 
-			 mrs = mtmt.executeQuery();
-			 srs = stmt.executeQuery();
+			mrs = mtmt.executeQuery();
+			srs = stmt.executeQuery();
 			while (mrs.next()) {
 				System.out.println("ipAddress = " + ipAddress + ", mrs.getString = " + mrs.getString("ipAddress"));
-				if (ipAddress.equals(mrs.getString("ipAddress"))) // 
-			    { 
-			     System.out.println("아이피 같아요");
-			     isUpdated=true;
-			     break;
-			    }
-			   }
+				if (ipAddress.equals(mrs.getString("ipAddress"))) //
+				{
+					System.out.println("아이피 같아요");
+					isUpdated = true;
+					break;
+				}
+			}
 
-			if(!isUpdated){ //ip 주소가 없다. 새로 들어왔네?
+			if (!isUpdated) { // ip 주소가 없다. 새로 들어왔네?
 				System.out.println("ip 주소 없지");
 				if (srs.next()) { // 테이블에 대화내용 있으면
 					int num = Integer.parseInt(srs.getString("num")) + 1;
@@ -185,20 +187,48 @@ public class ChatServer{
 				pstmt.executeUpdate();
 				nstmt.executeUpdate();
 			}
-			
+
 			System.out.println("Insert Complete");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			 if (mrs != null) try { mrs.close(); } catch(SQLException ex) {}
-			 if (srs != null) try { srs.close(); } catch(SQLException ex) {}
-			 if (pstmt != null) try { stmt.close(); } catch(SQLException ex) {}
-			 if (nstmt != null) try { stmt.close(); } catch(SQLException ex) {}
-			 if (mtmt != null) try { stmt.close(); } catch(SQLException ex) {}
-		     if (stmt != null) try { stmt.close(); } catch(SQLException ex) {}
-		     if (conn != null) try { conn.close(); } catch(SQLException ex) {}
-			
+			if (mrs != null)
+				try {
+					mrs.close();
+				} catch (SQLException ex) {
+				}
+			if (srs != null)
+				try {
+					srs.close();
+				} catch (SQLException ex) {
+				}
+			if (pstmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException ex) {
+				}
+			if (nstmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException ex) {
+				}
+			if (mtmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException ex) {
+				}
+			if (stmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException ex) {
+				}
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+				}
+
 		}
 
 	}
@@ -243,7 +273,7 @@ public class ChatServer{
 
 	}
 
-	/*public static Connection getConnection() throws Exception {
+	public static Connection getConnection() throws Exception {
 		Properties props = new Properties();
 		String path = ChatServer.class.getResource("db.properties").getPath();
 
@@ -263,24 +293,21 @@ public class ChatServer{
 			System.out.println(e);
 		}
 		return null;
-	}*/
+	}
 
-	
-	 public static Connection getConnection() throws Exception { try { String driver
-	 = "com.mysql.jdbc.Driver"; String url =
-	 "jdbc:mysql://localhost:3306/test"; String username = "root"; String
-	 password = "1234"; Class.forName(driver);
-	 
-	 
-	 
-	 
-	 Connection conn = DriverManager.getConnection(url, username, password);
-	 System.out.println("Connected"); return conn;
-	 
-	 } catch (Exception e) { System.out.println(e); } return null; }
-
-	
-
-	
+	/*
+	 * public static Connection getConnection() throws Exception { try { String
+	 * driver = "com.mysql.jdbc.Driver"; String url =
+	 * "jdbc:mysql://localhost:3306/test"; String username = "root"; String
+	 * password = "1234"; Class.forName(driver);
+	 * 
+	 * 
+	 * 
+	 * 
+	 * Connection conn = DriverManager.getConnection(url, username, password);
+	 * System.out.println("Connected"); return conn;
+	 * 
+	 * } catch (Exception e) { System.out.println(e); } return null; }
+	 */
 
 }
