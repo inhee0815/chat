@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	
+		<form name ="loginform"  action="/project5/UserNameServlet">
+			<div class="box">
+				<input type="text" name="userid" value="아이디 입력하세요."> <br>
+				<input type="password" name="pass"> <br>
+				<p>
+					<span class="fleft"><input type="checkbox" id=""><label
+						for=""> 아이디 저장</label></span> <span class="fright"><a href="">아이디
+							찾기</a>&nbsp;|&nbsp;<a href="">비밀번호 찾기</a></span>
+				</p>
+			</div>
+			<input type="submit" value="로그인" onclick="loginCheck();"/>
+			<input type="button" value="회원가입"/>
+		</form>
+</body>
+<script>
+
+function loginCheck() {
+	if(document.loginform.userid.value.length == 0) {
+		alert("아이디를 입력해주세요.");
+		loginform.userid.focus();
+		return false;
+	}
+	
+	if(document.loginform.pass.value.length == 0) {
+		alert("아이디를 입력해주세요.");
+		loginform.pass.focus();
+		return false;
+	}
+	return true;
+}
+
+
+
+</script>
+</html>

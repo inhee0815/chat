@@ -29,14 +29,13 @@ public class ChatListServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("GET~~~");
+
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		System.out.println("START~~~~~");
+
 
 		Connection conn = null;
 		String remove_chk = null;
@@ -49,7 +48,6 @@ public class ChatListServlet extends HttpServlet {
 						+ "\") and ";
 				String sql = "SELECT chat.num,chat.message,chat.ipAddress FROM chat, temp where" + remove_chk
 						+ "chat.num >= temp.fk_num and temp.ipAddress=\"" + ipAddress + "\"";
-				System.out.println("sql : " + sql);
 				PreparedStatement astmt = conn.prepareStatement(sql);
 				ResultSet ars = astmt.executeQuery();
 				
@@ -66,7 +64,6 @@ public class ChatListServlet extends HttpServlet {
 				}
 				Gson gson = new Gson();
 				String jsonArray = gson.toJson(list);
-				System.out.println(jsonArray);
 				response.setContentType("application/json");
 			    response.setCharacterEncoding("UTF-8");
 			    response.getWriter().write(jsonArray);

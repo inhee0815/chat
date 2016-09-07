@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+
+
+<style>
+table, tr, td {
+	font-size: 9pt;
+}
+</style>
+<script>
+	function url_show(no) {
+		var urls = new Array(10);
+		urls[1] = "/project5/uploadFolder/ryan1.gif";
+		urls[2] = "/project5/uploadFolder/ryan2.gif";
+		urls[3] = "/project5/uploadFolder/ryan3.gif";
+		urls[4] = "/project5/uploadFolder/ryan4.gif";
+		urls[5] = "/project5/uploadFolder/ryan5.gif";
+		urls[6] = "/project5/uploadFolder/ryan6.gif";
+		urls[7] = "/project5/uploadFolder/ryan7.gif";
+		urls[8] = "/project5/uploadFolder/ryan8.gif";
+
+		document.url_check.url_here.value = urls[no];
+		document.url_check.url_here.select();
+		opener.parent.upload_img(urls[no],
+				"<img src='"+urls[no]+"' height='100' width='100'>");
+
+	}
+</script>
+</head>
+
+<body>
+
+	<form name="url_check">
+
+		<div align="center">
+			<center>
+				<table border="1" cellpadding="4" cellspacing="0"
+					style="border-collapse: collapse" bordercolor="#111111"
+					id="AutoNumber1" bgcolor="#C0C0C0">
+					<tr>
+						<td bgcolor="#999999"><b><font color="#FFFFFF">Copy
+									This : </font></b></td>
+						<td bgcolor="#999999"><input type="text" size="59"
+							name="url_here"></td>
+					</tr>
+					<tr>
+						<td colspan="2" align="center">
+							<table border="1" cellpadding="4" cellspacing="0"
+								style="border-collapse: collapse" bordercolor="#999999"
+								bgcolor="#FFFFFF">
+								<tbody align="center">
+									<tr>
+										<td><a href="#"><img border="0"
+												onclick="javascript:url_show('1')"
+												src="/project5/uploadFolder/ryan1.gif" width="100"
+												height="100"></a></td>
+										<td><a href="#"><img border="0"
+												onclick="javascript:url_show('2')"
+												src="/project5/uploadFolder/ryan2.gif" width="100"
+												height="100"></a></td>
+										<td><a href="#"><img border="0"
+												onclick="javascript:url_show('3')"
+												src="/project5/uploadFolder/ryan3.gif" width="100"
+												height="100"></a></td>
+										<td><a href="#"><img border="0"
+												onclick="javascript:url_show('4')"
+												src="/project5/uploadFolder/ryan4.gif" width="100"
+												height="100"></a></td>
+										<td><a href="#"><img border="0"
+												onclick="javascript:url_show('5')"
+												src="/project5/uploadFolder/ryan5.gif" width="100"
+												height="100"></a></td>
+										<td><a href="#"><img border="0"
+												onclick="javascript:url_show('6')"
+												src="/project5/uploadFolder/ryan6.gif" width="100"
+												height="100"></a></td> 
+										<td><a href="#"><img border="0"
+												onclick="javascript:url_show('7')"
+												src="/project5/uploadFolder/ryan7.gif" width="100"
+												height="100"></a></td>
+										<td><a href="#"><img border="0"
+												onclick="javascript:url_show('8')"
+												src="/project5/uploadFolder/ryan8.gif" width="100"
+												height="100"></a></td>  
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</center>
+		</div>
+	</form>
+
+
+</body>
+
+</html>

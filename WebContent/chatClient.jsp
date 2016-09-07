@@ -40,7 +40,6 @@
 <script type="text/javascript">
 $(function() {
 
-	console.log('js start');
 	$.ajax({
 		url: '/project5/ChatListServlet',
 		async: false,
@@ -50,26 +49,28 @@ $(function() {
 		success: function(res) {
 			
 			$.each(res, function(k, v) {
-				console.log(k);
-				console.log(v['addr']);
-				console.log(v['message']);
-				console.log(v['num']);
+
 				if (v['addr'] == "<%=ipAddress%>"){ 
-					var htmlStr = "<div id= 'msg_b' class='msg_b'>"+ v['message'] + "</div>";
+					var htmlStr = "<div name='user_msg' id= 'msg_b' class='msg_b'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
 				} else {
-					var htmlStr = "<div id= 'msg_a' class='msg_a'>"+ v['message'] + "</div>";
+					var htmlStr = "<div name='user_msg' id= 'msg_a' class='msg_a'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
 				}
 				$('#msg_body').append(htmlStr);
-				div.ondblclick = function() {
+				
+			});
+
+			$("div[name='user_msg']").dblclick(function() {
+				var selectedIndex =  $(this).children().text();
 				var retVal = confirm("선택한 메시지를 삭제하시겠습니까?");
-				if (retVal == true) {
-				this.parentElement.removeChild(this);
-				msg_rmv("post","send.jsp", <%=num%>);
+				if (retVal) {
+					$(this).closest('div').remove();
+					msg_rmv("post","send.jsp",selectedIndex);
 				} else {
 					return;
-					}
-					};
+				}
+				
 			});
+
 		}, error : function(res) {
 			console.log(res);
 		}
@@ -88,7 +89,7 @@ $(function() {
 		onOpen(event)
 	};
 
-	webSocket.onclose = function(event) {F
+	webSocket.onclose = function(event) {
 		onClose(event)
 	};
 
@@ -98,8 +99,14 @@ $(function() {
 
 	inputMessage.onkeydown = function(event) {
 		if (!event)
-		event = window.event;
-
+			event = window.event;
+		if(event.shiftKey==true && event.keyCode==13) {
+			inputMessage.focus();
+			var enter = '\n';
+			inputMessage.selection=document.body.createTextRange;
+			inputMessage.selection.text=enter; 
+			event.returnValue = false;
+		}
 		if (event.keyCode == 13) {
 			event.preventDefault(); // 줄바꿈 막음
 			var str =inputMessage.value;
@@ -177,7 +184,6 @@ $(function() {
 	}
 	
 	function msg_rmv(method,path,num) {
-		alert(num);
 		var form = document.createElement("form");
 		form.setAttribute("method", method);
 		form.setAttribute("action", path);
@@ -223,7 +229,7 @@ $(function() {
 	}
 
 	function popupOpen() {
-		var popUrl = "test.html";
+		var popUrl = "emoji.html";
 		var popOption = "width=370, height=360, resizable=no, scrollbars=no, status=no;";
 		window.open(popUrl, "", popOption);
 	}
