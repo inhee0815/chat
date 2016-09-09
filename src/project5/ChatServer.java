@@ -41,48 +41,17 @@ public class ChatServer {
 	public void onMessage(String message, Session session) throws IOException {
 		System.out.println(message);
 
-		String username = (String) session.getUserProperties().get("username"); // 서버와
+		String userid = (String) session.getUserProperties().get("userid"); // 서버와
 																				// 연결되어
 																				// 있는
 																				// 정보
 																				// 가져옴
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
-
-		if (username != null) {
-			synchronized (clients) { // 접속 중인 모든 이용자에게 메시지를 전송한다.
-				for (Session client : clients) {
-					try {
-						if (!client.equals(session))
-							client.getBasicRemote().sendText(buildJsonData(username, message));
-						// getBasicRemote() : 객체를 구하고
-						// sendText() : 텍스트를 더한다.
-						// 메시지 전송이 성공할 때까지 계속 루프를 돈다.
-						// 결국 이용자에게 메시지를 보내고야 만다.
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		} else {
-			// username 수정 처리
-		}
-		JSONObject obj = new JSONObject();
-		obj.put(username, message);
-		try {
-			BufferedWriter fw = new BufferedWriter(new FileWriter("C:\\myJson.json", true));
-			fw.write(obj.toJSONString());
-			fw.newLine();
-			fw.flush();
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Create JSON Object : " + obj);
 		try {
 			Connection conn = getConnection();
 			String sql = "INSERT INTO chat (message, reg_date, ipAddress) VALUES (?,?,?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, username + " : " + message);
+			pstmt.setString(1, userid + " : " + message);
 			pstmt.setString(2, formatter.format(d));
 			pstmt.setString(3, ipAddress);
 			pstmt.executeUpdate();
@@ -98,23 +67,54 @@ public class ChatServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if (userid != null) {
+			synchronized (clients) { // 접속 중인 모든 이용자에게 메시지를 전송한다.
+				for (Session client : clients) {
+					try {
+						if (!client.equals(session))
+							client.getBasicRemote().sendText(buildJsonData(userid, message));
+						// getBasicRemote() : 객체를 구하고
+						// sendText() : 텍스트를 더한다.
+						// 메시지 전송이 성공할 때까지 계속 루프를 돈다.
+						// 결국 이용자에게 메시지를 보내고야 만다.
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		} else {
+			// userid 수정 처리
+		}
+		JSONObject obj = new JSONObject();
+		obj.put(userid, message);
+		try {
+			BufferedWriter fw = new BufferedWriter(new FileWriter("C:\\myJson.json", true));
+			fw.write(obj.toJSONString());
+			fw.newLine();
+			fw.flush();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Create JSON Object : " + obj);
+		
 	}
 
 	@OnOpen
 	public void onOpen(EndpointConfig endpointConfig, Session session) {
 
 		System.out.println("오픈 : " + session);
-		session.getUserProperties().put("username", endpointConfig.getUserProperties().get("username"));
+		session.getUserProperties().put("userid", endpointConfig.getUserProperties().get("userid"));
 		session.getUserProperties().put("ipAddress", endpointConfig.getUserProperties().get("ipAddress"));
 		clients.add(session);
-		String username = (String) session.getUserProperties().get("username");
+		String userid = (String) session.getUserProperties().get("userid");
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
-		if (username != null) {
+		if (userid != null) {
 			synchronized (clients) {
 				for (Session client : clients) {
 					try {
 						if (!client.equals(session))
-							client.getBasicRemote().sendText(buildJsonData2(username, "님이 입장했습니다."));
+							client.getBasicRemote().sendText(buildJsonData2(userid, "님이 입장했습니다."));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -131,7 +131,7 @@ public class ChatServer {
 		ResultSet srs = null;
 		try {
 			conn = getConnection();
-			String sql = "INSERT INTO person (ipAddress, username) VALUES (?,?)"; // 사용자
+			String sql = "INSERT INTO person (ipAddress, userid) VALUES (?,?)"; // 사용자
 																					// 정보
 																					// 테이블에
 																					// 정보
@@ -172,14 +172,14 @@ public class ChatServer {
 				if (srs.next()) { // 테이블에 대화내용 있으면
 					int num = Integer.parseInt(srs.getString("num")) + 1;
 					pstmt.setString(1, ipAddress);
-					pstmt.setString(2, username);
+					pstmt.setString(2, userid);
 					nstmt.setString(1, sessionId);
 					nstmt.setString(2, ipAddress);
 					nstmt.setInt(3, num);
 				} else {
 					int num = Integer.parseInt(srs.getString("num"));
 					pstmt.setString(1, ipAddress);
-					pstmt.setString(2, username);
+					pstmt.setString(2, userid);
 					nstmt.setString(1, sessionId);
 					nstmt.setString(2, ipAddress);
 					nstmt.setInt(3, num);
@@ -235,13 +235,13 @@ public class ChatServer {
 
 	@OnClose
 	public void onClose(Session session) {
-		String username = (String) session.getUserProperties().get("username");
-		if (username != null) {
+		String userid = (String) session.getUserProperties().get("userid");
+		if (userid != null) {
 			synchronized (clients) {
 				for (Session client : clients) {
 					try {
 						if (!client.equals(session))
-							client.getBasicRemote().sendText(buildJsonData2(username, "님이 퇴장했습니다."));
+							client.getBasicRemote().sendText(buildJsonData2(userid, "님이 퇴장했습니다."));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -254,20 +254,20 @@ public class ChatServer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public String buildJsonData(String username, String message) {
+	public String buildJsonData(String userid, String message) {
 
 		JSONObject obj = new JSONObject();
-		obj.put("message", username + " : " + message);
+		obj.put("message", userid + " : " + message);
 		// System.out.println("json string : " + obj.toJSONString());
 		return obj.toJSONString();
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public String buildJsonData2(String username, String message) {
+	public String buildJsonData2(String userid, String message) {
 
 		JSONObject obj = new JSONObject();
-		obj.put("message", username + " " + message);
+		obj.put("message", userid + " " + message);
 		// System.out.println("json string : " + obj.toJSONString());
 		return obj.toJSONString();
 

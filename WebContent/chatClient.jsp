@@ -19,7 +19,7 @@
 		<input type="submit" value="전송" onclick="imgUp();" />
 		<iframe id="ifr" name="ifr" style="display: none;"></iframe>
 	</form>
-	<mark>username: <%=request.getAttribute("username")%></mark>
+	<mark>userid: <%=request.getAttribute("userid")%></mark>
 	<br>
 	<div class="msg_box" style="right: 290px">
 		<div style="color: black; text-align: center;" class="msg_head">
@@ -51,9 +51,9 @@ $(function() {
 			$.each(res, function(k, v) {
 
 				if (v['addr'] == "<%=ipAddress%>"){ 
-					var htmlStr = "<div name='user_msg' id= 'msg_b' class='msg_b'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
+					var htmlStr = "<div name='user_msg' id= 'msg_yellow' class='msg_yellow'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
 				} else {
-					var htmlStr = "<div name='user_msg' id= 'msg_a' class='msg_a'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
+					var htmlStr = "<div name='user_msg' id= 'msg_white' class='msg_white'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
 				}
 				$('#msg_body').append(htmlStr);
 				
@@ -116,8 +116,8 @@ $(function() {
 				return;
 			} else {
 				var div = document.createElement('div');
-				div.id='msg_b';
-				div.className='msg_b';
+				div.id='msg_yellow';
+				div.className='msg_yellow';
 				div.innerHTML = ConvertSystemSourcetoHtml(inputMessage.value);
 				document.getElementById('msg_body').appendChild(div);
 				var d = document.getElementById("msg_body");
@@ -131,8 +131,8 @@ $(function() {
 	function onMessage(event) {
 		var div = document.createElement('div');
 		var jsonData = JSON.parse(event.data);
-		div.id='msg_a';
-		div.className='msg_a';
+		div.id='msg_white';
+		div.className='msg_white';
 		if(jsonData.message != null) {
 			div.innerHTML = jsonData.message;
 			document.getElementById('msg_body').appendChild(div);
@@ -215,8 +215,8 @@ $(function() {
 
 	function upload_img(addr, tag) {
 		var div = document.createElement('div');
-		div.setAttribute("id", "msg_b");
-		div.setAttribute("class", "msg_b");
+		div.setAttribute("id", "msg_yellow");
+		div.setAttribute("class", "msg_yellow");
 		var img = document.createElement("img");
 		img.setAttribute("src", addr);
 		img.setAttribute("height", "100");
@@ -230,7 +230,7 @@ $(function() {
 
 	function popupOpen() {
 		var popUrl = "emoji.html";
-		var popOption = "width=370, height=360, resizable=no, scrollbars=no, status=no;";
+		var popOption = "width=650, height=600, resizable=no, scrollbars=no, status=no;";
 		window.open(popUrl, "", popOption);
 	}
 

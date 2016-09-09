@@ -113,7 +113,7 @@ body {
 	border-radius: 6px;
 }
 
-.msg_a {
+.msg_white {
 	position: relative;
 	background: #ffffff;
 	padding: 10px;
@@ -124,7 +124,7 @@ body {
 	border-radius: 5px;
 }
 
-.msg_a:before {
+.msg_white:before {
 	content: "";
 	position: absolute;
 	width: 0px;
@@ -135,7 +135,7 @@ body {
 	top: 7px;
 }
 
-.msg_b {
+.msg_yellow {
 	background: #fcf20f;
 	padding: 10px;
 	min-height: 15px;
@@ -146,7 +146,7 @@ body {
 	border-radius: 5px;
 }
 
-.msg_b:after {
+.msg_yellow:after {
 	content: "";
 	position: absolute;
 	width: 0px;

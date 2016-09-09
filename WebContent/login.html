@@ -5,38 +5,79 @@
 <title>Insert title here</title>
 </head>
 <body>
-	
-		<form name ="loginform"  action="/project5/UserNameServlet">
-			<div class="box">
-				<input type="text" name="userid" value="아이디 입력하세요."> <br>
-				<input type="password" name="pass"> <br>
-				<p>
-					<span class="fleft"><input type="checkbox" id=""><label
-						for=""> 아이디 저장</label></span> <span class="fright"><a href="">아이디
-							찾기</a>&nbsp;|&nbsp;<a href="">비밀번호 찾기</a></span>
-				</p>
-			</div>
-			<input type="submit" value="로그인" onclick="loginCheck();"/>
-			<input type="button" value="회원가입"/>
-		</form>
+
+	<form name="loginform" method="post" action="UserIdServlet">
+		<div class="box">
+			<input type="text" name="userid" id="userid"> <br> <input
+				type="password" name="pass" id="pass"> <br>
+			<p>
+				<span class="fleft"><input type="checkbox" id=""><label
+					for=""> 아이디 저장</label></span> <span class="fright"><a href="">아이디
+						찾기</a>&nbsp;|&nbsp;<a href="">비밀번호 찾기</a></span>
+			</p>
+		</div>
+		<input type="button" value="로그인" onclick="loginCheck();" /> <input
+			type="button" value="회원가입" onclick="location.href = 'user.jsp'" />
+	</form>
 </body>
 <script>
-
-function loginCheck() {
-	if(document.loginform.userid.value.length == 0) {
-		alert("아이디를 입력해주세요.");
-		loginform.userid.focus();
-		return false;
+	window.onload = function() {
+		var form = document.loginform;
+		form.userid.focus();
 	}
 	
-	if(document.loginform.pass.value.length == 0) {
-		alert("아이디를 입력해주세요.");
-		loginform.pass.focus();
-		return false;
-	}
-	return true;
-}
+	function loginCheck() {
+		
+		var form = document.loginform;
 
+		if (!form.userid.value) {
+			alert("아이디를 입력해주세요.");
+			form.userid.focus();
+			return;
+		}
+		if (!form.pass.value) {
+			alert("비밀번호를 입력해주세요.");
+			form.pass.focus();
+			return;
+		}
+		infoSubmit("post","login_send.jsp");
+	}
+	
+	function infoCheck(toggle) {
+		if(toggle){
+			alert("있는데?");
+		} else {
+			alert("없는데?");
+		}
+	}
+	
+	
+	function infoSubmit(method, path) {
+		var id = document.loginform.userid.value;
+		var pw = document.loginform.pass.value;
+		var form = document.createElement("form");
+		form.setAttribute("method", method);
+		form.setAttribute("action", path);
+		var hiddenId = document.createElement("input");
+		hiddenId.setAttribute("type", "hidden");
+		hiddenId.setAttribute("name", "hidden_id");
+		hiddenId.setAttribute("value", id);
+		var hiddenPw = document.createElement("input");
+		hiddenPw.setAttribute("type", "hidden");
+		hiddenPw.setAttribute("name", "hidden_pw");
+		hiddenPw.setAttribute("value", pw);
+		var iframe = document.createElement("iframe");
+		iframe.setAttribute("id", "hidden");
+		iframe.setAttribute("name", "hiddenifr");
+		iframe.setAttribute("scr", path);
+		iframe.setAttribute("style", "display:none;");
+		form.appendChild(hiddenId);
+		form.appendChild(hiddenPw);
+		document.body.appendChild(form);
+		document.body.appendChild(iframe);
+		form.target = "hiddenifr";
+		form.submit();
+	}
 
 
 </script>

@@ -5,15 +5,15 @@
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>
     <welcome-file>index.jsp</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>login.html</welcome-file>
+    <welcome-file>login.htm</welcome-file>
+    <welcome-file>login.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
     <description></description>
-    <display-name>UserNameServlet</display-name>
-    <servlet-name>UserNameServlet</servlet-name>
-    <servlet-class>project5.UserNameServlet</servlet-class>
+    <display-name>UserIdServlet</display-name>
+    <servlet-name>UserIdServlet</servlet-name>
+    <servlet-class>project5.UserIdServlet</servlet-class>
     
     </servlet>
     <servlet>
@@ -21,13 +21,23 @@
     <servlet-name>ChatListServlet</servlet-name>
     <servlet-class>project5.ChatListServlet</servlet-class>
   </servlet>
+  <servlet>
+    <display-name>UserServlet</display-name>
+    <servlet-name>UserServlet</servlet-name>
+    <servlet-class>project5.UserServlet</servlet-class>
+  </servlet>
+  
   <servlet-mapping>
-    <servlet-name>UserNameServlet</servlet-name>
-    <url-pattern>/UserNameServlet</url-pattern>
+    <servlet-name>UserIdServlet</servlet-name>
+    <url-pattern>/UserIdServlet</url-pattern>
   </servlet-mapping>
     
   <servlet-mapping>
     <servlet-name>ChatListServlet</servlet-name>
     <url-pattern>/ChatListServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UserServlet</servlet-name>
+    <url-pattern>/UserServlet</url-pattern>
   </servlet-mapping>
 </web-app>
