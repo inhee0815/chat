@@ -11,8 +11,7 @@
 			<input type="text" name="userid" id="userid"> <br> <input
 				type="password" name="pass" id="pass"> <br>
 			<p>
-				<span class="fleft"><input type="checkbox" id=""><label
-					for=""> 아이디 저장</label></span> <span class="fright"><a href="">아이디
+				<span class="fright"><a href="">아이디
 						찾기</a>&nbsp;|&nbsp;<a href="">비밀번호 찾기</a></span>
 			</p>
 		</div>
@@ -44,10 +43,14 @@
 	}
 	
 	function infoCheck(toggle) {
+		var form = document.loginform;
 		if(toggle){
 			alert("있는데?");
+			form.submit();
+			
 		} else {
 			alert("없는데?");
+			return;
 		}
 	}
 	

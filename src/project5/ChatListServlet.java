@@ -39,15 +39,15 @@ public class ChatListServlet extends HttpServlet {
 
 		Connection conn = null;
 		String remove_chk = null;
-		String ipAddress = request.getRemoteAddr();
-		System.out.println("ipAddress : " + ipAddress);
+		String userid = "dlsgmlek";
+		//System.out.println("ChatListServlet : " + userid);
 		try {
 			conn = ChatServer.getConnection();
 			if (ChatServer.isUpdated) {
-				remove_chk = " chat.num not in(select rmv_num from remove where ipAddress=\"" + ipAddress
+				remove_chk = " chat.num not in(select rmv_num from removal where userid=\"" + userid
 						+ "\") and ";
-				String sql = "SELECT chat.num,chat.message,chat.ipAddress FROM chat, temp where" + remove_chk
-						+ "chat.num >= temp.fk_num and temp.ipAddress=\"" + ipAddress + "\"";
+				String sql = "SELECT chat.num,chat.message,chat.userid,chat.reg_date FROM chat, temp where" + remove_chk
+						+ "chat.num >= temp.fk_num and temp.userid=\"" + userid  + "\"";
 				PreparedStatement astmt = conn.prepareStatement(sql);
 				ResultSet ars = astmt.executeQuery();
 				
@@ -58,7 +58,8 @@ public class ChatListServlet extends HttpServlet {
 					
 					map.put("num", ars.getInt("num"));
 					map.put("message", ars.getString("message"));
-					map.put("addr", ars.getString("ipAddress"));
+					map.put("userid", ars.getString("userid"));
+					map.put("reg_date",ars.getTimestamp("reg_date"));
 					
 					list.add(map);
 				}

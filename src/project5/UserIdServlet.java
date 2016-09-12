@@ -28,6 +28,7 @@ public class UserIdServlet extends HttpServlet {
 		httpSession.setAttribute("userid", userid); // session¿¡ Á¢±Ù
 		httpSession.setAttribute("ipAddress", ipAddress);
 		request.setAttribute("userid", userid);
+		
 		if (userid != null) {
 			RequestDispatcher dispatcher = request.getRequestDispatcher("chatClient.jsp");
 			dispatcher.forward(request, response);

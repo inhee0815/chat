@@ -44,7 +44,7 @@ public class UserServlet extends HttpServlet {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, username);
 			pstmt.setString(2, userid);
-			pstmt.setString(3, strSHA);
+			pstmt.setString(3, userid + strSHA);
 			pstmt.setString(4, sdf.format(d));
 			pstmt.executeUpdate();
 		} catch (Exception e) {

@@ -14,15 +14,15 @@
 	String password = "1234";
 	Class.forName(driver);
 	int num = Integer.parseInt(request.getParameter("num"));
-	String ipAddress = request.getParameter("ip");
+	String userid = request.getParameter("userid");
 
 
 	try {
 		Connection conn = DriverManager.getConnection(url, username, password);
 
-		String sql = "INSERT INTO remove (ipAddress,rmv_num) VALUES (?,?)";
+		String sql = "INSERT INTO removal (userid,rmv_num) VALUES (?,?)";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, ipAddress);
+		pstmt.setString(1, userid);
 		pstmt.setInt(2, num);
 		pstmt.executeUpdate();
 		pstmt.close();

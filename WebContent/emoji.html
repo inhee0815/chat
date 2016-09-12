@@ -5,11 +5,7 @@
 <title>Insert title here</title>
 
 
-<style>
-table, tr, td {
-	font-size: 9pt;
-}
-</style>
+
 <script>
 	function url_show(no) {
 		var urls = new Array(20);
@@ -34,8 +30,7 @@ table, tr, td {
 		urls[19] = "http://i.imgur.com/hPzjBBS.gif";
 
 
-		document.url_check.url_here.value = urls[no];
-		document.url_check.url_here.select();
+
 		opener.parent.upload_img(urls[no],
 				"<img src='"+urls[no]+"' height='100' width='100'>");
 
@@ -52,12 +47,7 @@ table, tr, td {
 			<table border="1" cellpadding="4" cellspacing="0"
 				style="border-collapse: collapse" bordercolor="#111111"
 				id="AutoNumber1" bgcolor="#C0C0C0">
-				<tr>
-					<td bgcolor="#999999"><b><font color="#FFFFFF">Copy
-								This : </font></b></td>
-					<td bgcolor="#999999"><input type="text" size="59"
-						name="url_here"></td>
-				</tr>
+				
 				<tr>
 					<td colspan="2" align="center">
 						<table border="1" cellpadding="4" cellspacing="0"

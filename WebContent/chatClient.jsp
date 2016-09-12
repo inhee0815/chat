@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%
-	String ipAddress = request.getRemoteAddr();
+	String userid = request.getParameter("userid");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -19,21 +19,31 @@
 		<input type="submit" value="전송" onclick="imgUp();" />
 		<iframe id="ifr" name="ifr" style="display: none;"></iframe>
 	</form>
-	<mark>userid: <%=request.getAttribute("userid")%></mark>
+	<mark><%=userid%> 님</mark>
 	<br>
+	<div class="wrapper">
 	<div class="msg_box" style="right: 290px">
 		<div style="color: black; text-align: center;" class="msg_head">
 			비즈커머스개발팀
 			<div class="close" onclick="button_close();">X</div>
-			<div class="emoji" onclick="popupOpen();">★</div>
 		</div>
 		<div class="msg_wrap" style="display: block;">
 			<div class="msg_body" id="msg_body"></div>
-			</br>
+			<div class="msg_etc">
+			<input type="button" class="emoji_button" onclick="popupOpen();"/>
+			<input type="button" class="pic_button"/>
+			</div>
 			<div class="msg_footer">
 				<textarea class="msg_input" id="msg_input" onkeyup="resize(this)"></textarea>
 			</div>
 		</div>
+	</div>
+	<div class="room_box" >
+		<div style="color: black; text-align: center;" class="room_head">
+			대화상대
+		</div>
+		<div class="room_body" id="room_body"></div>
+	</div>
 	</div>
 
 </body>
@@ -47,10 +57,8 @@ $(function() {
 		dataType: 'json',
 		data: {},
 		success: function(res) {
-			
 			$.each(res, function(k, v) {
-
-				if (v['addr'] == "<%=ipAddress%>"){ 
+				if (v['userid'] == "<%=userid%>"){ 
 					var htmlStr = "<div name='user_msg' id= 'msg_yellow' class='msg_yellow'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
 				} else {
 					var htmlStr = "<div name='user_msg' id= 'msg_white' class='msg_white'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
@@ -116,10 +124,17 @@ $(function() {
 				return;
 			} else {
 				var div = document.createElement('div');
+				//var span = document.createElement('span');
+				//var now = new Date();
 				div.id='msg_yellow';
 				div.className='msg_yellow';
+				//span.className="chat_time";
+				//var nowTime=now.getHours()+"시"+now.getMinutes()+"분";
+				//alert(nowTime);
 				div.innerHTML = ConvertSystemSourcetoHtml(inputMessage.value);
+				//span.innerHTML=nowTime;
 				document.getElementById('msg_body').appendChild(div);
+				//div.appendChild(span);
 				var d = document.getElementById("msg_body");
 				d.scrollTop=d.scrollHeight-d.offsetHeight;
 				webSocket.send(ConvertSystemSourcetoHtml(inputMessage.value));
@@ -130,12 +145,19 @@ $(function() {
 
 	function onMessage(event) {
 		var div = document.createElement('div');
+		//var span = document.createElement('span');
+		//var now = new Date();
 		var jsonData = JSON.parse(event.data);
 		div.id='msg_white';
 		div.className='msg_white';
+		//span.className="chat_time";
 		if(jsonData.message != null) {
+			//var nowTime=now.getHours()+"시"+now.getMinutes()+"분";
+			alert(nowTime);
 			div.innerHTML = jsonData.message;
+			//span.innerHTML=nowTime;
 			document.getElementById('msg_body').appendChild(div);
+			//document.getElementById(div).appendChild(span);
 			var d = document.getElementById("msg_body");
 			d.scrollTop=d.scrollHeight-d.offsetHeight;
 
@@ -191,17 +213,17 @@ $(function() {
 		hiddenNum.setAttribute("type", "hidden");
 		hiddenNum.setAttribute("name", "num");
 		hiddenNum.setAttribute("value", num);
-		var hiddenIp = document.createElement("input");
-		hiddenIp.setAttribute("type", "hidden");
-		hiddenIp.setAttribute("name", "ip");
-		hiddenIp.setAttribute("value", "<%=ipAddress%>");
+		var hiddenId = document.createElement("input");
+		hiddenId.setAttribute("type", "hidden");
+		hiddenId.setAttribute("name", "userid");
+		hiddenId.setAttribute("value", "<%=userid%>");
 		var iframe = document.createElement("iframe");
 		iframe.setAttribute("id", "hidden");
 		iframe.setAttribute("name", "hiddenifr");
 		iframe.setAttribute("scr", path);
 		iframe.setAttribute("style", "display:none;");
 		form.appendChild(hiddenNum);
-		form.appendChild(hiddenIp);
+		form.appendChild(hiddenId);
 		document.body.appendChild(form);
 		document.body.appendChild(iframe);
 		form.target = "hiddenifr";

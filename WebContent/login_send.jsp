@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="java.io.*,java.text.*"%>
+<%@ page import="project5.util.EncryptUtil"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 
@@ -12,12 +13,12 @@
 	Class.forName(driver);
 	String userid= request.getParameter("hidden_id");
 	String pass= request.getParameter("hidden_pw");
-	//String strSHA = EncryptUtil.getSHA256(pass);
+	String strSHA = EncryptUtil.getSHA256(pass);
 	boolean loginchk=false;
 	try {
 		Connection conn = DriverManager.getConnection(url, username, password);
-		String sql = "select * from user where id=\"" + userid + "\" and pw=\"" + pass + "\"";
-		System.out.println(sql);
+		String sql = "select * from user where id=\"" + userid + "\" and pw=\"" + userid + strSHA + "\"";
+		//System.out.println(sql);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		ResultSet rs = pstmt.executeQuery();
 		if(rs.next()){

@@ -1,7 +1,5 @@
 package project5;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -12,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
@@ -49,11 +46,12 @@ public class ChatServer {
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
 		try {
 			Connection conn = getConnection();
-			String sql = "INSERT INTO chat (message, reg_date, ipAddress) VALUES (?,?,?)";
+			String sql = "INSERT INTO chat (message, reg_date, ipAddress, userid) VALUES (?,?,?,?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, userid + " : " + message);
 			pstmt.setString(2, formatter.format(d));
 			pstmt.setString(3, ipAddress);
+			pstmt.setString(4, userid);
 			pstmt.executeUpdate();
 			pstmt.close();
 			conn.close();
@@ -121,7 +119,7 @@ public class ChatServer {
 				}
 			}
 		}
-		String sessionId = (String) session.toString();
+		//String sessionId = (String) session.toString();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		PreparedStatement nstmt = null;
@@ -136,7 +134,7 @@ public class ChatServer {
 																					// 테이블에
 																					// 정보
 																					// 입력
-			String sql2 = "INSERT INTO temp(session_id,ipAddress,fk_num) VALUES (?,?,?)"; // open했을
+			String sql2 = "INSERT INTO temp(userid,ipAddress,fk_num) VALUES (?,?,?)"; // open했을
 																							// 때
 																							// 대화내용
 																							// row
@@ -154,7 +152,6 @@ public class ChatServer {
 			// 읽어와서 그
 			// 다음부터 쭉
 			// 보여주기
-
 			mrs = mtmt.executeQuery();
 			srs = stmt.executeQuery();
 			while (mrs.next()) {
@@ -173,14 +170,14 @@ public class ChatServer {
 					int num = Integer.parseInt(srs.getString("num")) + 1;
 					pstmt.setString(1, ipAddress);
 					pstmt.setString(2, userid);
-					nstmt.setString(1, sessionId);
+					nstmt.setString(1, userid);
 					nstmt.setString(2, ipAddress);
 					nstmt.setInt(3, num);
 				} else {
 					int num = Integer.parseInt(srs.getString("num"));
 					pstmt.setString(1, ipAddress);
 					pstmt.setString(2, userid);
-					nstmt.setString(1, sessionId);
+					nstmt.setString(1, userid);
 					nstmt.setString(2, ipAddress);
 					nstmt.setInt(3, num);
 				}
