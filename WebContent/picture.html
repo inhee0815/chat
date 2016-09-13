@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+	<form id="frm" method="post" enctype="multipart/form-data"
+		action="img.jsp">
+		<input name="Filedata" class="upload" id="uploadInputBox" type="file" />
+		<input type="submit" value="전송" onclick="imgUp();" />
+		<iframe id="ifr" name="ifr" style="display: none;"></iframe>
+	</form>
+</body>
+<script type="text/javascript">
+	function imgUp() {
+		document.getElementById("frm").target = "ifr";
+		return false;
+	}
+
+	function upload_img(addr, tag) {
+		var div = opener.document.createElement('div');
+		div.setAttribute("id", "msg_yellow");
+		div.setAttribute("class", "msg_yellow");
+		var img = opener.document.createElement("img");
+		img.setAttribute("src", addr);
+		img.setAttribute("height", "100");
+		img.setAttribute("width", "100");
+		div.appendChild(img);
+		opener.document.getElementById('msg_body').appendChild(div);
+		var d = opener.document.getElementById("msg_body");
+		d.scrollTop = d.scrollHeight - d.offsetHeight;
+		opener.webSocket.send(tag);
+	}
+</script>

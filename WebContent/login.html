@@ -2,21 +2,26 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>로그인화면</title>
+<link href="login_style.css?<?=filemtime('login_style.css')?>" rel="stylesheet"
+	type="text/css">
 </head>
 <body>
 
 	<form name="loginform" method="post" action="UserIdServlet">
-		<div class="box">
-			<input type="text" name="userid" id="userid"> <br> <input
-				type="password" name="pass" id="pass"> <br>
-			<p>
-				<span class="fright"><a href="">아이디
-						찾기</a>&nbsp;|&nbsp;<a href="">비밀번호 찾기</a></span>
-			</p>
+		<div id="block">
+			<label id="user" for="name">ID</label>
+			<input type="text" name="userid" id="userid"  placeholder="Username" required/> <br> 
+			<label id="pass" for="password">PW</label>
+			<input type="password" name="pass" id="pass" placeholder="Password" required /> <br>
+
+			<input type="button" value="로그인"  id="login" name="login" onclick="loginCheck();" />
+		<div id="option"> 
+			<a href="user.jsp">Sign in</a>
+			<a href="#">forgot?</a>
 		</div>
-		<input type="button" value="로그인" onclick="loginCheck();" /> <input
-			type="button" value="회원가입" onclick="location.href = 'user.jsp'" />
+		</div>
+		
 	</form>
 </body>
 <script>
@@ -45,11 +50,8 @@
 	function infoCheck(toggle) {
 		var form = document.loginform;
 		if(toggle){
-			alert("있는데?");
 			form.submit();
-			
 		} else {
-			alert("없는데?");
 			return;
 		}
 	}

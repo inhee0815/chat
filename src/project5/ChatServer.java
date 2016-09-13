@@ -29,7 +29,7 @@ public class ChatServer {
 	private static Set<Session> clients = Collections.synchronizedSet(new HashSet<Session>());
 	java.util.Date d = new java.util.Date();
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-	static boolean isUpdated = false;
+	static boolean isUpdated ;
 	
 	// session : 접속자마다 한개의 세션이 생성되어 데이터 통신수단으로 사용
 	// 한개의 브라우저에서 여러개의 탭을 사용해서 접속하면 session은 서로 다르지만 httpsession은 동일
@@ -80,9 +80,8 @@ public class ChatServer {
 					}
 				}
 			}
-		} else {
-			// userid 수정 처리
 		}
+		
 		JSONObject obj = new JSONObject();
 		obj.put(userid, message);
 		try {
@@ -100,11 +99,12 @@ public class ChatServer {
 
 	@OnOpen
 	public void onOpen(EndpointConfig endpointConfig, Session session) {
-
+		
 		System.out.println("오픈 : " + session);
 		session.getUserProperties().put("userid", endpointConfig.getUserProperties().get("userid"));
 		session.getUserProperties().put("ipAddress", endpointConfig.getUserProperties().get("ipAddress"));
 		clients.add(session);
+		isUpdated = false;
 		String userid = (String) session.getUserProperties().get("userid");
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
 		if (userid != null) {
@@ -119,7 +119,6 @@ public class ChatServer {
 				}
 			}
 		}
-		//String sessionId = (String) session.toString();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		PreparedStatement nstmt = null;
@@ -155,17 +154,13 @@ public class ChatServer {
 			mrs = mtmt.executeQuery();
 			srs = stmt.executeQuery();
 			while (mrs.next()) {
-				System.out.println("ipAddress = " + ipAddress + ", mrs.getString = " + mrs.getString("ipAddress"));
-				if (ipAddress.equals(mrs.getString("ipAddress"))) //
+				if (userid.equals(mrs.getString("userid"))) //있다 즉 최초 접속이 아니다
 				{
-					System.out.println("아이피 같아요");
 					isUpdated = true;
 					break;
 				}
 			}
-
-			if (!isUpdated) { // ip 주소가 없다. 새로 들어왔네?
-				System.out.println("ip 주소 없지");
+			if (!isUpdated) { // 최초 접속이다
 				if (srs.next()) { // 테이블에 대화내용 있으면
 					int num = Integer.parseInt(srs.getString("num")) + 1;
 					pstmt.setString(1, ipAddress);

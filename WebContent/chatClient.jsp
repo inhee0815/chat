@@ -8,17 +8,12 @@
 <html>
 <head>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-<title>Insert title here</title>
+<title>채팅 화면</title>
 <link href="style.css?<?=filemtime('style.css')?>" rel="stylesheet"
 	type="text/css">
 </head>
 <body>
-	<form id="frm" method="post" enctype="multipart/form-data"
-		action="img.jsp">
-		<input name="Filedata" class="upload" id="uploadInputBox" type="file" />
-		<input type="submit" value="전송" onclick="imgUp();" />
-		<iframe id="ifr" name="ifr" style="display: none;"></iframe>
-	</form>
+	
 	<mark><%=userid%> 님</mark>
 	<br>
 	<div class="wrapper">
@@ -30,8 +25,8 @@
 		<div class="msg_wrap" style="display: block;">
 			<div class="msg_body" id="msg_body"></div>
 			<div class="msg_etc">
-			<input type="button" class="emoji_button" onclick="popupOpen();"/>
-			<input type="button" class="pic_button"/>
+			<input type="button" class="emoji_button" onclick="popupOpen('emoji.html');"/>
+			<input type="button" class="pic_button" onclick="popupOpen('picture.html')"/>
 			</div>
 			<div class="msg_footer">
 				<textarea class="msg_input" id="msg_input" onkeyup="resize(this)"></textarea>
@@ -124,17 +119,10 @@ $(function() {
 				return;
 			} else {
 				var div = document.createElement('div');
-				//var span = document.createElement('span');
-				//var now = new Date();
 				div.id='msg_yellow';
 				div.className='msg_yellow';
-				//span.className="chat_time";
-				//var nowTime=now.getHours()+"시"+now.getMinutes()+"분";
-				//alert(nowTime);
 				div.innerHTML = ConvertSystemSourcetoHtml(inputMessage.value);
-				//span.innerHTML=nowTime;
 				document.getElementById('msg_body').appendChild(div);
-				//div.appendChild(span);
 				var d = document.getElementById("msg_body");
 				d.scrollTop=d.scrollHeight-d.offsetHeight;
 				webSocket.send(ConvertSystemSourcetoHtml(inputMessage.value));
@@ -145,19 +133,14 @@ $(function() {
 
 	function onMessage(event) {
 		var div = document.createElement('div');
-		//var span = document.createElement('span');
-		//var now = new Date();
+	
 		var jsonData = JSON.parse(event.data);
 		div.id='msg_white';
 		div.className='msg_white';
-		//span.className="chat_time";
+	
 		if(jsonData.message != null) {
-			//var nowTime=now.getHours()+"시"+now.getMinutes()+"분";
-			alert(nowTime);
 			div.innerHTML = jsonData.message;
-			//span.innerHTML=nowTime;
 			document.getElementById('msg_body').appendChild(div);
-			//document.getElementById(div).appendChild(span);
 			var d = document.getElementById("msg_body");
 			d.scrollTop=d.scrollHeight-d.offsetHeight;
 
@@ -229,12 +212,6 @@ $(function() {
 		form.target = "hiddenifr";
 		form.submit();
 	}
-
-	function imgUp() {
-		document.getElementById("frm").target = "ifr";
-		return false;
-	}
-
 	function upload_img(addr, tag) {
 		var div = document.createElement('div');
 		div.setAttribute("id", "msg_yellow");
@@ -250,8 +227,8 @@ $(function() {
 		webSocket.send(tag);
 	}
 
-	function popupOpen() {
-		var popUrl = "emoji.html";
+
+	function popupOpen(popUrl) {
 		var popOption = "width=650, height=600, resizable=no, scrollbars=no, status=no;";
 		window.open(popUrl, "", popOption);
 	}

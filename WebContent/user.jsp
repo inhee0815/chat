@@ -74,8 +74,8 @@
 	}
 	function idformCheck() {
 		
-		if(!form.user_id.value.match(/^[a-zA-Z][a-zA-Z0-9]{3,11}$/)) { //첫글자 영문, 영문소문자, 숫자 조합 
-			//alert("ID 첫글자는 영문으로 시작하며 영문과 숫자조합만 가능합니다.");
+		if(!form.user_id.value.match(/^[a-z][a-z\d]{3,11}$/)) { //첫글자 영문, 영문소문자, 숫자 조합 
+			//alert("4자 이상의 영문(소문자)과 숫자만 사용할 수 있습니다.");
 			return false;
 		}
 		return true;
@@ -84,7 +84,7 @@
 	function idCheck(toggle) {
 		
 		if( !idformCheck() || form.user_id.value.length < 4 || form.user_id.length > 12 || toggle) {
-			document.getElementById('idLayer').innerHTML="사용할 수 없는 id입니다.";
+			document.getElementById('idLayer').innerHTML="사용할 수 없는 id입니다." ;
 			form.user_id.focus();
 		} else {
 			document.getElementById('idLayer').innerHTML="OK!";
@@ -93,14 +93,18 @@
 
 	
 	function passformCheck() {
+
+		var chk_num = form.user_pass.value.search(/[0-9]/g); 
+		var chk_eng = form.user_pass.value.search(/[a-z]/ig); 
+		var strSpecial = form.user_pass.value.search(/[!@#$%^&*()?_~]/g);
 		
 		if (form.user_pass.value.length < 8) {
-			//alert("비밀번호는 문자, 숫자, 특수문자의 조합으로 최소 8자리로 입력해주세요.");
+			alert("비밀번호는 최소 8자리로 입력해주세요.");
 			return false;
 		} 
 
-		if (!form.user_pass.value.match(/([a-zA-Z0-9].*[!,@,#,$,%,^,&,*,?,_,~])|([!,@,#,$,%,^,&,*,?,_,~].*[a-zA-Z0-9])/)) {
-			//alert("비밀번호는 문자, 숫자, 특수문자의 조합으로 최소 8자리로 입력해주세요.");
+		if (chk_num < 0 || chk_eng < 0 || strSpecial < 0) {
+			alert("비밀번호는 문자, 숫자, 특수문자의 조합으로 입력해주세요.");
 			return false;
 		} 
 		return true;

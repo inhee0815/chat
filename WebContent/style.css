@@ -62,17 +62,17 @@ body {
 .msg_body {
 	background: #98bbd1;
 	height: 400px;
-	font-size: 12px;
+	font-size: 14px;
 	padding: 15px;
-	min-height:700px;
+	min-height:650px;
 	overflow:auto;
 }
 .room_body {
 	background: #98bbd1;
 	height: 400px;
-	font-size: 12px;
+	font-size: 14px;
 	padding: 15px;
-	min-height:700px;
+	min-height:650px;
 	overflow:auto;
 }
 .msg_etc{
@@ -148,23 +148,23 @@ body {
 	position: relative;
 	background: #ffffff;
 	padding: 10px;
-	min-height: 10px;
-	margin-bottom: 30px;
+	min-height: 40px;
+	margin-bottom: 38px;
 	margin-right: 30px;
-	margin-left: 80px;
+	margin-left: 100px;
 	border-radius: 5px;
+	
 }
 
 .msg_white:before {
-	content: "";
+	content: url(images/unknown_image.png);
 	position: absolute;
-	width: 0px;
-	height: 0px;
-	border: 10px solid;
-	border-color: transparent #ffffff transparent transparent;
-	left: -20px;
-	top: 7px;
+	left:-95px;
+	top:-9px;
+
 }
+
+
 
 .msg_yellow {
 	background: #fcf20f;
