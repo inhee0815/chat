@@ -1,33 +1,135 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-	<form name ="nameform" action="/project5/UserNameServlet">
-		<mark>ì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”!</mark>
-		<br> <input type="text" name="username" size="20" /> <input
-			type="button" value="Enter" onclick="javascript:writeCheck()" />
-	</form>
-	<script type="text/javascript">
-		window.onload = function() {
-			var form = document.nameform;
-			form.username.focus();
-		}
-		function writeCheck() {
-			var form = document.nameform;
-			var f=form.username.value;
-			var pattern = /\s/g;
-			
-			if( f.match(pattern) || f.length < 1){
-				alert("ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ì´ë¦„ì…ë‹ˆë‹¤. ë‹¤ë¥¸ ì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
-				form.username.focus();
-				return;
-			}
-			
-			form.submit();
-		}
-	</script>
-</body>
-</html>
+<HTML>
+<HEAD>
+ <TITLE>³»ºÎ ÅÇ º¯È¯</TITLE>
+ <script language="javascript">
+
+ function tabChg(tabAllNum, tabSelfNum)  //tabAllNumÀº ÀüÃ¼ ÅÇÀÇ ¼ö, 
+ {                                                               //tabSelfNumÀº ÀÚ½ÅÀÇ ¼ø¼­
+  for(i=1; i<=tabAllNum; i++)
+  { 
+   if( i==tabSelfNum ) //ÀÚ½ÅÀÇ ¼ø¼­°¡ ¸Â´Ù¸é È­¸é¿¡ º¸¿©ÁÖ°í ±×·¸Áö ¾Ê´Ù¸é º¸¿©ÁÖÁö ¾ÊÀ½
+   {   
+    document.getElementById ('tabChg_'+ tabSelfNum).style.display='';   
+   }
+   else
+   {   
+    document.getElementById ('tabChg_' + i).style.display='none';   
+   }
+  }
+ }
+
+ </script>
+</HEAD>
+<BODY>
+
+<!-- Ã¹¹øÂ° ³»ºÎ ÅÇ ½ÃÀÛ -->
+<div id="tabChg_1" style="display: ;" >
+ <span style="color:tomato">Ã¹¹øÂ° ÅÇ</span>&nbsp;&nbsp;
+ <a href="javascript:tabChg(3,2)"><span style="color:gray">µÎ¹øÂ° ÅÇ</span></a>&nbsp;&nbsp;
+ <a href="javascript:tabChg(3,3)"><span style="color:gray">¼¼¹øÂ° ÅÇ</span></a>&nbsp;&nbsp;
+</div>
+<!-- Ã¹¹øÂ° ³»ºÎ ÅÇ ³¡ -->
+
+<!-- µÎ¹øÂ° ³»ºÎ ÅÇ ½ÃÀÛ -->
+<div id="tabChg_2" style="display: none;" >
+ <a href="javascript:tabChg(3,1)"><span style="color:gray">Ã¹¹øÂ° ÅÇ</span></a>&nbsp;&nbsp;
+ <span style="color:tomato">µÎ¹øÂ° ÅÇ</span>&nbsp;&nbsp;
+ <a href="javascript:tabChg(3,3)"><span style="color:gray">¼¼¹øÂ° ÅÇ</span></a>&nbsp;&nbsp;
+</div>
+<!-- µÎ¹øÂ° ³»ºÎ ÅÇ ³¡ -->
+
+<!-- ¼¼¹øÂ° ³»ºÎ ÅÇ ½ÃÀÛ -->
+<div id="tabChg_3" style="display: none;" >
+ <a href="javascript:tabChg(3,1)"><span style="color:gray">Ã¹¹øÂ° ÅÇ</span></a>&nbsp;&nbsp;
+ <a href="javascript:tabChg(3,2)"><span style="color:gray">µÎ¹øÂ° ÅÇ</span></a>&nbsp;&nbsp;
+ <span style="color:tomato">¼¼¹øÂ° ÅÇ</span>&nbsp;&nbsp;
+ <div align="center">
+
+			<table border="1" cellpadding="4" cellspacing="0"
+				style="border-collapse: collapse" bordercolor="#111111"
+				id="AutoNumber1" bgcolor="#C0C0C0">
+				
+				<tr>
+					<td colspan="2" align="center">
+						<table border="1" cellpadding="4" cellspacing="0"
+							style="border-collapse: collapse" bordercolor="#999999"
+							bgcolor="#FFFFFF">
+							<tbody align="center">
+								<tr>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('1')"
+											src="http://i.imgur.com/EEE5jEf.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('2')"
+											src="http://i.imgur.com/yVLoRoY.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('3')"
+											src="http://i.imgur.com/K8PFFmy.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('4')"
+											src="http://i.imgur.com/pWNwyGS.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('5')"
+											src="http://i.imgur.com/eyf2SSG.gif" width="120" height="120"></a></td>
+								</tr>
+								<tr>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('6')"
+											src="http://i.imgur.com/8RHxg6W.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('7')"
+											src="http://i.imgur.com/yR8ocQA.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('8')"
+											src="http://i.imgur.com/hPzjBBS.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('9')"
+											src="http://i.imgur.com/xM8BAqP.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('10')"
+											src="http://i.imgur.com/wvdlWW0.gif" width="120" height="120"></a></td>
+								</tr>
+								<tr>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('11')"
+											src="http://i.imgur.com/pd5LVPh.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('12')"
+											src="http://i.imgur.com/onyShLP.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('13')"
+											src="http://i.imgur.com/2UqwCWJ.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('14')"
+											src="http://i.imgur.com/zExBbRa.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('15')"
+											src="http://i.imgur.com/8wPgf6n.gif" width="120" height="120"></a></td>
+								</tr>
+								<tr>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('16')"
+											src="http://i.imgur.com/wjwTbH5.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('17')"
+											src="http://i.imgur.com/4ADcjQ5.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('18')"
+											src="http://i.imgur.com/Q3E5piz.gif" width="120" height="120"></a></td>
+									<td><a href="#"><img border="0"
+											onclick="javascript:url_show('19')"
+											src="http://i.imgur.com/p2pH70V.gif" width="120" height="120"></a></td>
+
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</table>
+
+		</div>
+</div>
+<!-- ¼¼¹øÂ° ³»ºÎ ÅÇ ³¡ -->
+
+</BODY>
+</HTML>

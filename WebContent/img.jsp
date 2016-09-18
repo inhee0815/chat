@@ -68,6 +68,6 @@ if(request.getContentLength() > 10*1024*1024 ){
 	
 	fileAttach();
 	var sHTML = '<%=request.getContextPath()%>/uploadFolder/' + fname;
-	var fHTML = "<img src='"+sHTML+"' height='100' width='100'>";
+	var fHTML = "<img src='"+sHTML+"' height='120' width='120'>";
 	parent.upload_img(sHTML,fHTML);
 </script>

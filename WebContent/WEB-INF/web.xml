@@ -26,7 +26,13 @@
     <servlet-name>UserServlet</servlet-name>
     <servlet-class>project5.UserServlet</servlet-class>
   </servlet>
-  
+    <servlet>
+    <description></description>
+    <display-name>MemberListServlet</display-name>
+    <servlet-name>MemberListServlet</servlet-name>
+    <servlet-class>project5.MemberListServlet</servlet-class>
+    
+    </servlet>
   <servlet-mapping>
     <servlet-name>UserIdServlet</servlet-name>
     <url-pattern>/UserIdServlet</url-pattern>
@@ -39,5 +45,9 @@
   <servlet-mapping>
     <servlet-name>UserServlet</servlet-name>
     <url-pattern>/UserServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MemberListServlet</servlet-name>
+    <url-pattern>/MemberListServlet</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -1,5 +1,6 @@
 package project5;
 
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +20,7 @@ import com.google.gson.Gson;
 
 
 
-public class ChatListServlet extends HttpServlet {
+public class MemberListServlet extends HttpServlet {
 
 	/**
 	 * 
@@ -37,15 +38,10 @@ public class ChatListServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		Connection conn = null;
-		String remove_chk = null;
-		String userid = request.getParameter("userid");
 		try {
 			conn = ChatServer.getConnection();
 			if (ChatServer.isUpdated) {
-				remove_chk = " chat.num not in(select rmv_num from removal where userid=\"" + userid
-						+ "\") and ";
-				String sql = "SELECT chat.num,chat.message,chat.userid,chat.reg_date FROM chat, person where" + remove_chk
-						+ "chat.num >= person.fk_num and person.userid=\"" + userid  + "\"";
+				String sql = "SELECT * FROM temp";
 				PreparedStatement astmt = conn.prepareStatement(sql);
 				ResultSet ars = astmt.executeQuery();
 				
@@ -54,11 +50,8 @@ public class ChatListServlet extends HttpServlet {
 				while (ars.next()) {
 					Map<String, Object> map = new HashMap<String, Object>();
 
-					map.put("num", ars.getInt("num"));
-					map.put("message", ars.getString("message"));
 					map.put("userid", ars.getString("userid"));
-					map.put("reg_date",ars.getTimestamp("reg_date"));
-					
+
 					list.add(map);
 				}
 				Gson gson = new Gson();

@@ -14,7 +14,7 @@
 </head>
 <body>
 	
-	<mark><%=userid%> 님</mark>
+	<span class="userid" id="userid"><%=userid%></span>
 	<br>
 	<div class="wrapper">
 	<div class="msg_box" style="right: 290px">
@@ -44,16 +44,15 @@
 </body>
 <script type="text/javascript">
 $(function() {
-
 	$.ajax({
 		url: '/project5/ChatListServlet',
 		async: false,
 		type: 'POST',
 		dataType: 'json',
-		data: {},
+		data: {"userid" : $('#userid').text()},
 		success: function(res) {
 			$.each(res, function(k, v) {
-				if (v['userid'] == "<%=userid%>"){ 
+				if (v['userid'] == $('#userid').text()){ 
 					var htmlStr = "<div name='user_msg' id= 'msg_yellow' class='msg_yellow'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
 				} else {
 					var htmlStr = "<div name='user_msg' id= 'msg_white' class='msg_white'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
@@ -78,28 +77,47 @@ $(function() {
 			console.log(res);
 		}
 	});
+	$.ajax({
+		url: '/project5/MemberListServlet',
+		async: false,
+		type: 'POST',
+		dataType: 'json',
+		data: {},
+		success: function(res) {
+			$.each(res, function(k, v) {
+				var htmlStr = "<div id= '" + v['userid'] + "' class='msg_push'>"+ v['userid'] + "</div>";
+				$('#room_body').append(htmlStr);
+			});
+
+
+		}, error : function(res) {
+			console.log(res);
+		}
+	});
 });
 
-	var webSocket = new WebSocket("ws://172.21.25.189:8080/project5/ChatServer");
+	//var webSocket = new WebSocket("ws://172.21.25.189:8080/project5/ChatServer");
+	var webSocket = new WebSocket("ws://192.168.123.106:8080/project5/ChatServer");
+	//var webSocket = new WebSocket("ws://localhost:8080/project5/ChatServer");
 	var inputMessage = document.getElementById("msg_input");
-	var sendE = document.getElementById("send");
-
+	
 	webSocket.onerror = function(event) {
-		onerror(event);
+		onError(event);
 	};
-
+	
 	webSocket.onopen = function(event) {
-		onOpen(event)
+		onOpen(event);
 	};
-
-	webSocket.onclose = function(event) {
-		onClose(event)
-	};
-
+	
 	webSocket.onmessage = function(event) {
 		onMessage(event)
 	};
-
+	
+	function onOpen(event) {
+		var d = document.getElementById("msg_body");
+		d.scrollTop=d.scrollHeight-d.offsetHeight;
+	}
+	
 	inputMessage.onkeydown = function(event) {
 		if (!event)
 			event = window.event;
@@ -133,52 +151,33 @@ $(function() {
 
 	function onMessage(event) {
 		var div = document.createElement('div');
-	
 		var jsonData = JSON.parse(event.data);
-		div.id='msg_white';
-		div.className='msg_white';
-	
 		if(jsonData.message != null) {
-			div.innerHTML = jsonData.message;
-			document.getElementById('msg_body').appendChild(div);
-			var d = document.getElementById("msg_body");
-			d.scrollTop=d.scrollHeight-d.offsetHeight;
-
-		}
-	}
-
-	function onOpen(event) {
-		var d = document.getElementById("msg_body");
-		d.scrollTop=d.scrollHeight-d.offsetHeight;
-		var div = document.createElement('div');
-		var jsonData = JSON.parse(event.data);
-		div.id='msg_push';
-		div.className='msg_push';
-		if(jsonData.message != null) {
+			div.id='msg_white';
+			div.className='msg_white';
 			div.innerHTML = jsonData.message;
 			document.getElementById('msg_body').appendChild(div);
 			var d = document.getElementById("msg_body");
 			d.scrollTop=d.scrollHeight-d.offsetHeight;
 		}
-	}
-
-	function onClose(event) {
-		var div = document.createElement('div');
-		var jsonData = JSON.parse(event.data);
-		div.id='msg_push';
-		div.className='msg_push';
-		if(jsonData.message != null) {
-			div.innerHTML = jsonData.message;
-			document.getElementById('msg_body').appendChild(div);
-			var d = document.getElementById("msg_body");
-			d.scrollTop=d.scrollHeight-d.offsetHeight;
+		if(jsonData.come != null) {
+			div.id=jsonData.come;
+			div.className='msg_push';
+			div.innerHTML = jsonData.come;
+			document.getElementById('room_body').appendChild(div);
+			
 		}
-	}
+		if(jsonData.out != null) {
+			console.log(jsonData.out);
+			console.log(document.getElementById(jsonData.out));
+			var parentNode=document.getElementById('room_body');
+			var delNode=parentNode.removeChild(document.getElementById(jsonData.out));
+		}
 		
-	function onerror(event) {
-		alert(event.data);
 	}
-
+	function onError(event) {
+			alert(event.data);
+	}
 	function resize(obj) {
 		obj.style.height = "1px";
 		obj.style.height = (20+obj.scrollHeight)+"px";
@@ -218,8 +217,8 @@ $(function() {
 		div.setAttribute("class", "msg_yellow");
 		var img = document.createElement("img");
 		img.setAttribute("src", addr);
-		img.setAttribute("height", "100");
-		img.setAttribute("width", "100");
+		img.setAttribute("height", "120");
+		img.setAttribute("width", "120");
 		div.appendChild(img);
 		document.getElementById('msg_body').appendChild(div);
 		var d = document.getElementById("msg_body");

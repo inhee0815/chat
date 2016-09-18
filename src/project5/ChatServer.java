@@ -82,7 +82,7 @@ public class ChatServer {
 			}
 		}
 		
-		JSONObject obj = new JSONObject();
+		/*JSONObject obj = new JSONObject();
 		obj.put(userid, message);
 		try {
 			BufferedWriter fw = new BufferedWriter(new FileWriter("C:\\myJson.json", true));
@@ -93,13 +93,12 @@ public class ChatServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Create JSON Object : " + obj);
+		System.out.println("Create JSON Object : " + obj);*/
 		
 	}
 
 	@OnOpen
 	public void onOpen(EndpointConfig endpointConfig, Session session) {
-		
 		System.out.println("오픈 : " + session);
 		session.getUserProperties().put("userid", endpointConfig.getUserProperties().get("userid"));
 		session.getUserProperties().put("ipAddress", endpointConfig.getUserProperties().get("ipAddress"));
@@ -112,7 +111,7 @@ public class ChatServer {
 				for (Session client : clients) {
 					try {
 						if (!client.equals(session))
-							client.getBasicRemote().sendText(buildJsonData2(userid, "님이 입장했습니다."));
+							client.getBasicRemote().sendText(buildJsonData2(userid));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -120,64 +119,52 @@ public class ChatServer {
 			}
 		}
 		Connection conn = null;
+		PreparedStatement ptmt = null;
+		PreparedStatement ttmt = null;
 		PreparedStatement pstmt = null;
-		PreparedStatement nstmt = null;
-		PreparedStatement mtmt = null;
-		PreparedStatement stmt = null;
-		ResultSet mrs = null;
-		ResultSet srs = null;
+		PreparedStatement cstmt = null;
+		PreparedStatement tstmt = null;
+		ResultSet prs = null;
+		ResultSet crs = null;
+		ResultSet trs = null;
 		try {
 			conn = getConnection();
-			String sql = "INSERT INTO person (ipAddress, userid) VALUES (?,?)"; // 사용자
-																					// 정보
-																					// 테이블에
-																					// 정보
-																					// 입력
-			String sql2 = "INSERT INTO temp(userid,ipAddress,fk_num) VALUES (?,?,?)"; // open했을
-																							// 때
-																							// 대화내용
-																							// row
-																							// 넘버
-																							// 저장
-			String sql3 = "SELECT * FROM person"; // 사용자 정보 테이블 읽기
+			String sql = "INSERT INTO person (userid,ipAddress,fk_num) VALUES (?,?,?)"; //들어왔을 때 대화목록번호,사용자정보 저장
+			String sql2 = "INSERT INTO temp (userid) VALUES (?)";
+			String sql3 = "SELECT * FROM person where userid=\""+userid+"\""; // 사용자 정보 테이블 읽기
 			String sql4 = "SELECT * FROM chat";// 대화내용
-												// 목록
-			pstmt = conn.prepareStatement(sql);
-			nstmt = conn.prepareStatement(sql2);
-			mtmt = conn.prepareStatement(sql3);
-			stmt = conn.prepareStatement(sql4 + " order by num desc limit 1"); // 대화내용
-																				// row
-																				// 넘버
-			// 읽어와서 그
-			// 다음부터 쭉
-			// 보여주기
-			mrs = mtmt.executeQuery();
-			srs = stmt.executeQuery();
-			while (mrs.next()) {
-				if (userid.equals(mrs.getString("userid"))) //있다 즉 최초 접속이 아니다
-				{
-					isUpdated = true;
-					break;
-				}
+			String sql5 = "SELECT * FROM temp where userid=\""+userid+"\"";
+			
+			ptmt = conn.prepareStatement(sql);
+			ttmt = conn.prepareStatement(sql2);
+			pstmt = conn.prepareStatement(sql3);
+			cstmt = conn.prepareStatement(sql4 + " order by num desc limit 1"); // 대화내용
+			tstmt = conn.prepareStatement(sql5);
+			
+			prs = pstmt.executeQuery();
+			crs = cstmt.executeQuery();
+			trs = tstmt.executeQuery();
+			
+			if(!trs.next()){
+				ttmt.setString(1, userid);
+				ttmt.executeUpdate();
 			}
-			if (!isUpdated) { // 최초 접속이다
-				if (srs.next()) { // 테이블에 대화내용 있으면
-					int num = Integer.parseInt(srs.getString("num")) + 1;
-					pstmt.setString(1, ipAddress);
-					pstmt.setString(2, userid);
-					nstmt.setString(1, userid);
-					nstmt.setString(2, ipAddress);
-					nstmt.setInt(3, num);
+			
+			if(prs.next()){
+					isUpdated = true;
+			} else {
+				if (crs.next()) { // 테이블에 대화내용 있으면
+					int num = Integer.parseInt(crs.getString("num")) + 1;
+					ptmt.setString(1, userid);
+					ptmt.setString(2, ipAddress);
+					ptmt.setInt(3, num);
 				} else {
-					int num = Integer.parseInt(srs.getString("num"));
-					pstmt.setString(1, ipAddress);
-					pstmt.setString(2, userid);
-					nstmt.setString(1, userid);
-					nstmt.setString(2, ipAddress);
-					nstmt.setInt(3, num);
+					int num = Integer.parseInt(crs.getString("num"));
+					ptmt.setString(1, userid);
+					ptmt.setString(2, ipAddress);
+					ptmt.setInt(3, num);
 				}
-				pstmt.executeUpdate();
-				nstmt.executeUpdate();
+				ptmt.executeUpdate();
 			}
 
 			System.out.println("Insert Complete");
@@ -185,34 +172,29 @@ public class ChatServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			if (mrs != null)
+			if (prs != null)
 				try {
-					mrs.close();
+					prs.close();
 				} catch (SQLException ex) {
 				}
-			if (srs != null)
+			if (crs != null)
 				try {
-					srs.close();
+					crs.close();
+				} catch (SQLException ex) {
+				}
+			if (ptmt != null)
+				try {
+					ptmt.close();
 				} catch (SQLException ex) {
 				}
 			if (pstmt != null)
 				try {
-					stmt.close();
+					pstmt.close();
 				} catch (SQLException ex) {
 				}
-			if (nstmt != null)
+			if (cstmt != null)
 				try {
-					stmt.close();
-				} catch (SQLException ex) {
-				}
-			if (mtmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException ex) {
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
+					cstmt.close();
 				} catch (SQLException ex) {
 				}
 			if (conn != null)
@@ -233,7 +215,7 @@ public class ChatServer {
 				for (Session client : clients) {
 					try {
 						if (!client.equals(session))
-							client.getBasicRemote().sendText(buildJsonData2(userid, "님이 퇴장했습니다."));
+							client.getBasicRemote().sendText(buildJsonData3(userid));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -242,6 +224,22 @@ public class ChatServer {
 		}
 		System.out.println("클로즈 : " + session);
 		clients.remove(session);
+		try {
+			Connection conn = getConnection();
+			String sql = "DELETE FROM temp where userid=\""+userid+"\"";;
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.executeUpdate();
+			pstmt.close();
+			conn.close();
+			System.out.println("EXIT~~~~~");
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -256,10 +254,19 @@ public class ChatServer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public String buildJsonData2(String userid, String message) {
+	public String buildJsonData2(String userid) {
 
 		JSONObject obj = new JSONObject();
-		obj.put("message", userid + " " + message);
+		obj.put("come", userid);
+		// System.out.println("json string : " + obj.toJSONString());
+		return obj.toJSONString();
+
+	}
+	@SuppressWarnings("unchecked")
+	public String buildJsonData3(String userid) {
+
+		JSONObject obj = new JSONObject();
+		obj.put("out", userid);
 		// System.out.println("json string : " + obj.toJSONString());
 		return obj.toJSONString();
 
