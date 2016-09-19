@@ -13,7 +13,7 @@
 			<label id="user" for="name">ID</label>
 			<input type="text" name="userid" id="userid"  placeholder="Username" required/> <br> 
 			<label id="pass" for="password">PW</label>
-			<input type="password" name="pass" id="pass" placeholder="Password" required /> <br>
+			<input type="password" name="pass" id="pw" placeholder="Password" required /> <br>
 
 			<input type="button" value="로그인"  id="login" name="login" onclick="loginCheck();" />
 		<div id="option"> 
@@ -29,7 +29,24 @@
 		var form = document.loginform;
 		form.userid.focus();
 	}
-	
+	var idInput = document.getElementById("userid");
+	var pwInput = document.getElementById("pw");
+	var login=document.getElementById("login");
+	idInput.onkeydown = function(event) {
+		if (!event)
+			event = window.event;
+		if (event.keyCode == 13) {
+			login.click();
+		}
+	}
+	pwInput.onkeydown = function(event) {
+		if (!event)
+			event = window.event;
+		if (event.keyCode == 13) {
+			login.click();
+		}
+	}
+		
 	function loginCheck() {
 		
 		var form = document.loginform;
@@ -52,6 +69,7 @@
 		if(toggle){
 			form.submit();
 		} else {
+			alert("일치하는 유저 정보가 없습니다.")
 			return;
 		}
 	}

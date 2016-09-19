@@ -41,7 +41,7 @@ public class ChatListServlet extends HttpServlet {
 		String userid = request.getParameter("userid");
 		try {
 			conn = ChatServer.getConnection();
-			if (ChatServer.isUpdated) {
+			
 				remove_chk = " chat.num not in(select rmv_num from removal where userid=\"" + userid
 						+ "\") and ";
 				String sql = "SELECT chat.num,chat.message,chat.userid,chat.reg_date FROM chat, person where" + remove_chk
@@ -53,12 +53,10 @@ public class ChatListServlet extends HttpServlet {
 				
 				while (ars.next()) {
 					Map<String, Object> map = new HashMap<String, Object>();
-
 					map.put("num", ars.getInt("num"));
 					map.put("message", ars.getString("message"));
 					map.put("userid", ars.getString("userid"));
 					map.put("reg_date",ars.getTimestamp("reg_date"));
-					
 					list.add(map);
 				}
 				Gson gson = new Gson();
@@ -68,9 +66,7 @@ public class ChatListServlet extends HttpServlet {
 			    response.getWriter().write(jsonArray);
 			    
 				
-			} else {
-				return;
-			}
+	
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

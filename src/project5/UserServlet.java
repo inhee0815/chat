@@ -17,8 +17,6 @@ import project5.util.EncryptUtil;
 
 public class UserServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	java.util.Date d = new java.util.Date();
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,12 +38,11 @@ public class UserServlet extends HttpServlet {
 		System.out.println(strSHA);
 		try {
 			conn = ChatServer.getConnection();
-			String sql = "INSERT INTO user (name,id,pw,reg_date) VALUES (?,?,?,?)";
+			String sql = "INSERT INTO user (name,id,pw) VALUES (?,?,?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, username);
 			pstmt.setString(2, userid);
 			pstmt.setString(3, userid + strSHA);
-			pstmt.setString(4, sdf.format(d));
 			pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();

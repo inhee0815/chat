@@ -96,8 +96,8 @@ $(function() {
 	});
 });
 
-	//var webSocket = new WebSocket("ws://172.21.25.189:8080/project5/ChatServer");
-	var webSocket = new WebSocket("ws://192.168.123.106:8080/project5/ChatServer");
+	var webSocket = new WebSocket("ws://172.21.25.189:8080/project5/ChatServer");
+	//var webSocket = new WebSocket("ws://192.168.123.106:8080/project5/ChatServer");
 	//var webSocket = new WebSocket("ws://localhost:8080/project5/ChatServer");
 	var inputMessage = document.getElementById("msg_input");
 	
@@ -165,11 +165,8 @@ $(function() {
 			div.className='msg_push';
 			div.innerHTML = jsonData.come;
 			document.getElementById('room_body').appendChild(div);
-			
 		}
 		if(jsonData.out != null) {
-			console.log(jsonData.out);
-			console.log(document.getElementById(jsonData.out));
 			var parentNode=document.getElementById('room_body');
 			var delNode=parentNode.removeChild(document.getElementById(jsonData.out));
 		}
@@ -228,7 +225,7 @@ $(function() {
 
 
 	function popupOpen(popUrl) {
-		var popOption = "width=650, height=600, resizable=no, scrollbars=no, status=no;";
+		var popOption = "width=800, height=800, resizable=no, scrollbars=no, status=no;";
 		window.open(popUrl, "", popOption);
 	}
 

@@ -8,7 +8,7 @@
 	String driver = "com.mysql.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/test";
 	String username = "root";
-	String password = "apmsetup";
+	String password = "1234";
 	Class.forName(driver);
 	String userid= request.getParameter("hidden_id");
 	boolean idchk=false;

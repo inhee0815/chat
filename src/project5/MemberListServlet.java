@@ -40,7 +40,6 @@ public class MemberListServlet extends HttpServlet {
 		Connection conn = null;
 		try {
 			conn = ChatServer.getConnection();
-			if (ChatServer.isUpdated) {
 				String sql = "SELECT * FROM temp";
 				PreparedStatement astmt = conn.prepareStatement(sql);
 				ResultSet ars = astmt.executeQuery();
@@ -60,10 +59,6 @@ public class MemberListServlet extends HttpServlet {
 			    response.setCharacterEncoding("UTF-8");
 			    response.getWriter().write(jsonArray);
 			    
-				
-			} else {
-				return;
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

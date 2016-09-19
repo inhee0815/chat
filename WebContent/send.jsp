@@ -11,7 +11,7 @@
 	String driver = "com.mysql.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/test";
 	String username = "root";
-	String password = "apmsetup";
+	String password = "1234";
 	Class.forName(driver);
 	int num = Integer.parseInt(request.getParameter("num"));
 	String userid = request.getParameter("userid");

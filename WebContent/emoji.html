@@ -2,7 +2,9 @@
 <HEAD>
 <style type="text/css">
 </style>
-<TITLE>내부 탭 변환</TITLE>
+<title>이모티콘 화면</title>
+<link href="emoji_style.css?<?=filemtime('emoji_style.css')?>" rel="stylesheet"
+	type="text/css">
 <script language="javascript">
 function url_show(src) {
 
@@ -24,17 +26,13 @@ function url_show(src) {
 </script>
 </HEAD>
 <BODY>
-	<div id="minitabs">
+	<div id="minitabs" class="minitabs" align="center">
 		<ul>
 			<!-- 첫번째 내부 탭 시작 -->
-			<li class="m1"><a href="javascript:tabChg(4,1)"><span>라이언</span></a>
-			</li>
-			<li class="m2"><a href="javascript:tabChg(4,2)"><span>어피치</span></a>
-			</li>
-			<li class="m3"><a href="javascript:tabChg(4,3)"><span>보노보노</span></a>
-			</li>
-			<li class="m4"><a href="javascript:tabChg(4,4)"><span>카카오</span></a>
-			</li>
+			<li class="m1"><a href="javascript:tabChg(4,1)">라이언</a></li>
+			<li class="m2"><a href="javascript:tabChg(4,2)">어피치</a></li>
+			<li class="m3"><a href="javascript:tabChg(4,3)">보노보노</a></li>
+			<li class="m4"><a href="javascript:tabChg(4,4)">카카오</a></li>
 		</ul>
 	</div>
 

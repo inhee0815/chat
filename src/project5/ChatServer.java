@@ -1,8 +1,6 @@
 package project5;
 
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -24,34 +23,40 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.json.simple.JSONObject;
 
+
+
 @ServerEndpoint(value = "/ChatServer", configurator = ChatRoom.class)
 public class ChatServer {
 	private static Set<Session> clients = Collections.synchronizedSet(new HashSet<Session>());
-	java.util.Date d = new java.util.Date();
-	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	static boolean isUpdated ;
-	
-	// session : 접속자마다 한개의 세션이 생성되어 데이터 통신수단으로 사용
-	// 한개의 브라우저에서 여러개의 탭을 사용해서 접속하면 session은 서로 다르지만 httpsession은 동일
-	@SuppressWarnings("unchecked")
+	long now = System.currentTimeMillis();
+	Date date = new Date(now);
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+
 	@OnMessage
 	public void onMessage(String message, Session session) throws IOException {
 		System.out.println(message);
-
-		String userid = (String) session.getUserProperties().get("userid"); // 서버와
-																				// 연결되어
-																				// 있는
-																				// 정보
-																				// 가져옴
+		boolean first = false;
+		String userid = (String) session.getUserProperties().get("userid"); 
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
 		try {
 			Connection conn = getConnection();
-			String sql = "INSERT INTO chat (message, reg_date, ipAddress, userid) VALUES (?,?,?,?)";
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+			String sql = "SELECT * FROM chat where reg_date>=date_sub(now(),interval 1 day);";
+			String sql2 = "INSERT INTO chat (message, ipAddress, userid) VALUES (?,?,?)";
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			PreparedStatement pstmt = null;
+			ResultSet rs = stmt.executeQuery();
+			
+			if(!rs.next()){
+				first = true;
+				sql="INSERT INTO chat (message) VALUES (now())";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.executeUpdate();
+			}
+			pstmt = conn.prepareStatement(sql2);
 			pstmt.setString(1, userid + " : " + message);
-			pstmt.setString(2, formatter.format(d));
-			pstmt.setString(3, ipAddress);
-			pstmt.setString(4, userid);
+			pstmt.setString(2, ipAddress);
+			pstmt.setString(3, userid);
 			pstmt.executeUpdate();
 			pstmt.close();
 			conn.close();
@@ -69,12 +74,13 @@ public class ChatServer {
 			synchronized (clients) { // 접속 중인 모든 이용자에게 메시지를 전송한다.
 				for (Session client : clients) {
 					try {
-						if (!client.equals(session))
+						if (!client.equals(session)){
 							client.getBasicRemote().sendText(buildJsonData(userid, message));
 						// getBasicRemote() : 객체를 구하고
 						// sendText() : 텍스트를 더한다.
 						// 메시지 전송이 성공할 때까지 계속 루프를 돈다.
 						// 결국 이용자에게 메시지를 보내고야 만다.
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -231,8 +237,6 @@ public class ChatServer {
 			pstmt.executeUpdate();
 			pstmt.close();
 			conn.close();
-			System.out.println("EXIT~~~~~");
-			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -258,7 +262,6 @@ public class ChatServer {
 
 		JSONObject obj = new JSONObject();
 		obj.put("come", userid);
-		// System.out.println("json string : " + obj.toJSONString());
 		return obj.toJSONString();
 
 	}
@@ -267,7 +270,14 @@ public class ChatServer {
 
 		JSONObject obj = new JSONObject();
 		obj.put("out", userid);
-		// System.out.println("json string : " + obj.toJSONString());
+		return obj.toJSONString();
+
+	}
+	@SuppressWarnings("unchecked")
+	public String buildJsonData4(String date) {
+
+		JSONObject obj = new JSONObject();
+		obj.put("date", date);
 		return obj.toJSONString();
 
 	}
@@ -294,19 +304,6 @@ public class ChatServer {
 		return null;
 	}
 
-	/*
-	 * public static Connection getConnection() throws Exception { try { String
-	 * driver = "com.mysql.jdbc.Driver"; String url =
-	 * "jdbc:mysql://localhost:3306/test"; String username = "root"; String
-	 * password = "1234"; Class.forName(driver);
-	 * 
-	 * 
-	 * 
-	 * 
-	 * Connection conn = DriverManager.getConnection(url, username, password);
-	 * System.out.println("Connected"); return conn;
-	 * 
-	 * } catch (Exception e) { System.out.println(e); } return null; }
-	 */
+
 
 }
