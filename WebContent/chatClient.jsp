@@ -13,9 +13,8 @@
 	type="text/css">
 </head>
 <body>
-	
-	<span class="userid" id="userid"><%=userid%></span>
-	<br>
+
+	<div class="userid" id="userid"><%=userid%></div>
 	<div class="wrapper">
 	<div class="msg_box" style="right: 290px">
 		<div style="color: black; text-align: center;" class="msg_head">
@@ -38,6 +37,10 @@
 			대화상대
 		</div>
 		<div class="room_body" id="room_body"></div>
+		<div class="room_footer" id="room_footer">
+		<input type="button" class="info_button" onclick="popupOpen('info.html');"/>
+		<input type="button" class="logout_button" onclick="checkLogout();"/>
+		</div>
 	</div>
 	</div>
 
@@ -236,6 +239,15 @@ $(function() {
 		str = str.replace(/\'/gi, "&#39;");
 		str = str.replace(/\n/g, "<br/>");
 		return str;
+	}
+	function checkLogout(){
+			var retVal = confirm("정말 로그아웃하시겠습니까?");
+			if (retVal == true) {
+				webSocket.close();
+				location.href="login.html";
+			} else {
+				return;
+			}
 	}
 </script>
 </html>

@@ -9,10 +9,12 @@
 <body>
 
 	<form name="loginform" method="post" action="UserIdServlet">
+		
+		<img id="initalk" src="images/initalk.png" >
 		<div id="block">
-			<label id="user" for="name">ID</label>
+			<label id="user" for="name"></label>
 			<input type="text" name="userid" id="userid"  placeholder="Username" required/> <br> 
-			<label id="pass" for="password">PW</label>
+			<label id="pass" for="password"></label>
 			<input type="password" name="pass" id="pw" placeholder="Password" required /> <br>
 
 			<input type="button" value="로그인"  id="login" name="login" onclick="loginCheck();" />

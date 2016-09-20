@@ -1,6 +1,8 @@
 package project5;
 
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -88,7 +90,7 @@ public class ChatServer {
 			}
 		}
 		
-		/*JSONObject obj = new JSONObject();
+		JSONObject obj = new JSONObject();
 		obj.put(userid, message);
 		try {
 			BufferedWriter fw = new BufferedWriter(new FileWriter("C:\\myJson.json", true));
@@ -99,7 +101,7 @@ public class ChatServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Create JSON Object : " + obj);*/
+		System.out.println("Create JSON Object : " + obj);
 		
 	}
 

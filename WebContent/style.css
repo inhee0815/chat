@@ -57,7 +57,12 @@ body {
 	border-radius: 5px 5px 0px 0px;
 	padding: 15px;
 }
-
+.room_footer{
+	background: #e0e0e0;
+	height: 30px;
+	padding: 3px;
+	border: 2px solid #98bbd1;
+}
 
 .msg_body {
 	background: #98bbd1;
@@ -79,6 +84,7 @@ body {
 	background: #e0e0e0;
 	height: 30px;
 	padding: 3px;
+	border: 1px solid #98bbd1;
 }
 .msg_push {
 	position: relative;
@@ -161,10 +167,7 @@ body {
 	position: absolute;
 	left:-95px;
 	top:-9px;
-
 }
-
-
 
 .msg_yellow {
 	background: #fcf20f;
@@ -203,6 +206,20 @@ body {
 }
 .pic_button {
         background: url(images/pic_button.png) no-repeat;
+        border: none;
+        width: 40px;
+        height: 32px;
+        cursor: pointer;
+}
+.info_button {
+        background: url(images/info_button.png) no-repeat;
+        border: none;
+        width: 40px;
+        height: 32px;
+        cursor: pointer;
+}
+.logout_button {
+        background: url(images/logout_button.png) no-repeat;
         border: none;
         width: 40px;
         height: 32px;

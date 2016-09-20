@@ -40,7 +40,7 @@ public class MemberListServlet extends HttpServlet {
 		Connection conn = null;
 		try {
 			conn = ChatServer.getConnection();
-				String sql = "SELECT * FROM temp";
+				String sql = "SELECT userid FROM temp";
 				PreparedStatement astmt = conn.prepareStatement(sql);
 				ResultSet ars = astmt.executeQuery();
 				
