@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ public class ChatListServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	SimpleDateFormat formatter = new SimpleDateFormat("aa HH:mm ");
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -42,10 +43,10 @@ public class ChatListServlet extends HttpServlet {
 		try {
 			conn = ChatServer.getConnection();
 			
-				remove_chk = " chat.num not in(select rmv_num from removal where userid=\"" + userid
+				remove_chk = " chat.chat_no not in(select del_num from delmsg where user_id=\"" + userid
 						+ "\") and ";
-				String sql = "SELECT chat.num,chat.message,chat.userid,chat.reg_date FROM chat, person where" + remove_chk
-						+ "chat.num >= person.fk_num and person.userid=\"" + userid  + "\"";
+				String sql = "SELECT chat.chat_no,chat.message,chat.user_id,chat.send_date FROM chat, user where" + remove_chk
+						+ "chat.chat_no >= user.enter_num and user.user_id=\"" + userid  + "\"";
 				PreparedStatement astmt = conn.prepareStatement(sql);
 				ResultSet ars = astmt.executeQuery();
 				
@@ -53,10 +54,10 @@ public class ChatListServlet extends HttpServlet {
 				
 				while (ars.next()) {
 					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("num", ars.getInt("num"));
+					map.put("num", ars.getInt("chat_no"));
 					map.put("message", ars.getString("message"));
-					map.put("userid", ars.getString("userid"));
-					map.put("reg_date",ars.getTimestamp("reg_date"));
+					map.put("userid", ars.getString("user_id"));
+					map.put("send_date",formatter.format(ars.getTimestamp("send_date")));
 					list.add(map);
 				}
 				Gson gson = new Gson();

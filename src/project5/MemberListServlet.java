@@ -40,7 +40,7 @@ public class MemberListServlet extends HttpServlet {
 		Connection conn = null;
 		try {
 			conn = ChatServer.getConnection();
-				String sql = "SELECT userid FROM temp";
+				String sql = "SELECT part_id FROM participant";
 				PreparedStatement astmt = conn.prepareStatement(sql);
 				ResultSet ars = astmt.executeQuery();
 				
@@ -49,7 +49,7 @@ public class MemberListServlet extends HttpServlet {
 				while (ars.next()) {
 					Map<String, Object> map = new HashMap<String, Object>();
 
-					map.put("userid", ars.getString("userid"));
+					map.put("userid", ars.getString("part_id"));
 
 					list.add(map);
 				}

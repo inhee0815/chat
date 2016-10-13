@@ -19,7 +19,6 @@
 	<div class="msg_box" style="right: 290px">
 		<div style="color: black; text-align: center;" class="msg_head">
 			비즈커머스개발팀
-			<div class="close" onclick="button_close();">X</div>
 		</div>
 		<div class="msg_wrap" style="display: block;">
 			<div class="msg_body" id="msg_body"></div>
@@ -29,6 +28,7 @@
 			</div>
 			<div class="msg_footer">
 				<textarea class="msg_input" id="msg_input" onkeyup="resize(this)"></textarea>
+				<input type="button" class="send_button" value="전송" onclick="sendMessage();" />
 			</div>
 		</div>
 	</div>
@@ -56,9 +56,10 @@ $(function() {
 		success: function(res) {
 			$.each(res, function(k, v) {
 				if (v['userid'] == $('#userid').text()){ 
-					var htmlStr = "<div name='user_msg' id= 'msg_yellow' class='msg_yellow'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
+					var htmlStr = "<div name='user_msg' id= 'msg_yellow' class='msg_yellow' style ='text-align:right;'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div><div class='date_yellow'>" + v['send_date'] + "</div>";
+					
 				} else {
-					var htmlStr = "<div name='user_msg' id= 'msg_white' class='msg_white'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div>";
+					var htmlStr = "<div class='send_id'>"+v['userid']+ "</div><div name='user_msg' id= 'msg_white' class='msg_white'>"+ v['message'] + "<span style='display:none;''>" + v['num'] + "</span></div><div class='date_white'>" + v['send_date'] + "</div>";
 				}
 				$('#msg_body').append(htmlStr);
 				
@@ -113,7 +114,16 @@ $(function() {
 	};
 	
 	webSocket.onmessage = function(event) {
-		onMessage(event)
+		var jsonData = JSON.parse(event.data); 
+		$("#msg_body").append("<div class='send_id'>"+jsonData.userid+"</div>");
+		$("#msg_body").append("<div name='user_msg' id='msg_white' class='msg_white'>"+jsonData.message+"</div>");
+		var d = document.getElementById("msg_body");
+		d.scrollTop=d.scrollHeight-d.offsetHeight;
+
+
+
+
+		//onMessage(event)
 	};
 	
 	function onOpen(event) {
@@ -151,6 +161,24 @@ $(function() {
 			}
 		}
 	};
+	function sendMessage() {
+		var str =inputMessage.value;
+		var tmp =str.replace(/\\s| /gi, '');
+		if(tmp==''){
+			inputMessage.focus();
+			return;
+		} else {
+			var div = document.createElement('div');
+			div.id='msg_yellow';
+			div.className='msg_yellow';
+			div.innerHTML = ConvertSystemSourcetoHtml(inputMessage.value);
+			document.getElementById('msg_body').appendChild(div);
+			var d = document.getElementById("msg_body");
+			d.scrollTop=d.scrollHeight-d.offsetHeight;
+			webSocket.send(ConvertSystemSourcetoHtml(inputMessage.value));
+			inputMessage.value = "";
+		}
+	}
 
 	function onMessage(event) {
 		var div = document.createElement('div');

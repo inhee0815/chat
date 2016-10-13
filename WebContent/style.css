@@ -63,6 +63,9 @@ body {
 	padding: 3px;
 	border: 2px solid #98bbd1;
 }
+.msg_footer {
+	border: 2px solid #98bbd1;
+}
 
 .msg_body {
 	background: #98bbd1;
@@ -85,6 +88,7 @@ body {
 	height: 30px;
 	padding: 3px;
 	border: 1px solid #98bbd1;
+	border-radius: 5px;
 }
 .msg_push {
 	position: relative;
@@ -98,15 +102,32 @@ body {
 .msg_input {
 	border: 1px solid white;
 	border-top: 1px solid #DDDDDD;
+	border-radius: 5px;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box; /* Firefox, other Gecko */
 	box-sizing: border-box;
-	width: 700px;
+	width: 600px;
 	min-height: 70px;
 	max-height: 200px;
 	resize: none;
 }
-
+.send_id{
+	position:relative;
+	clear:both;
+	margin-left : 13px;
+}
+.date_yellow{
+	position:relative;
+	float:right;
+	font-size:9pt;
+	color : #6a6a6a;
+}
+.date_white{
+	position:relative;
+	float:left;
+	font-size:9pt;
+	color : #6a6a6a;
+}
 .close {
 	float: right;
 	margin-right: 7px;
@@ -146,9 +167,6 @@ body {
 	border-radius: 6px;
 }
 
-.chat_time {
-	font-size:9pt;
-}
 
 .msg_white {
 	position: relative;
@@ -159,6 +177,8 @@ body {
 	margin-right: 30px;
 	margin-left: 100px;
 	border-radius: 5px;
+	clear: both;
+	float: left;
 	
 }
 
@@ -166,7 +186,7 @@ body {
 	content: url(images/unknown_image.png);
 	position: absolute;
 	left:-95px;
-	top:-9px;
+	top:3px;
 }
 
 .msg_yellow {
@@ -178,6 +198,8 @@ body {
 	margin-right: 30px;
 	margin-left: 30px;
 	border-radius: 5px;
+	clear: both;
+	float: right;
 }
 
 .msg_yellow:after {
@@ -224,4 +246,14 @@ body {
         width: 40px;
         height: 32px;
         cursor: pointer;
+}
+.send_button {
+	background: #fcf20f;
+	border: none;
+	width: 95px;
+	min-height: 70px;
+	max-height: 200px;
+	cursor: pointer;
+	float: right;
+	border-radius:8px
 }

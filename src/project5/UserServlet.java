@@ -31,18 +31,18 @@ public class UserServlet extends HttpServlet {
 		String username = request.getParameter("user_name");
 		String userid = request.getParameter("user_id");
 		String userpass = request.getParameter("user_pass");
-		String strSHA = EncryptUtil.getSHA256(userpass);
+		String strSHA = EncryptUtil.getSHA256(userid+userpass);
 		Connection conn = null;
 		System.out.println(username);
 		System.out.println(userid);
 		System.out.println(strSHA);
 		try {
 			conn = ChatServer.getConnection();
-			String sql = "INSERT INTO user (name,id,pw) VALUES (?,?,?)";
+			String sql = "INSERT INTO member (mem_name,mem_id,mem_pw) VALUES (?,?,?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, username);
 			pstmt.setString(2, userid);
-			pstmt.setString(3, userid + strSHA);
+			pstmt.setString(3, strSHA);
 			pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();

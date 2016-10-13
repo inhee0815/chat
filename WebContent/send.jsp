@@ -20,7 +20,7 @@
 	try {
 		Connection conn = DriverManager.getConnection(url, username, password);
 
-		String sql = "INSERT INTO removal (userid,rmv_num) VALUES (?,?)";
+		String sql = "INSERT INTO delmsg (user_id,del_num) VALUES (?,?)";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, userid);
 		pstmt.setInt(2, num);

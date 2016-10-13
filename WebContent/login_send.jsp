@@ -13,11 +13,11 @@
 	Class.forName(driver);
 	String userid= request.getParameter("hidden_id");
 	String pass= request.getParameter("hidden_pw");
-	String strSHA = EncryptUtil.getSHA256(pass);
+	String strSHA = EncryptUtil.getSHA256(userid+pass);
 	boolean loginchk=false;
 	try {
 		Connection conn = DriverManager.getConnection(url, username, password);
-		String sql = "select * from user where id=\"" + userid + "\" and pw=\"" + userid + strSHA + "\"";
+		String sql = "select * from member where MEM_ID=\"" + userid + "\" and MEM_PW=\"" + strSHA + "\"";
 		//System.out.println(sql);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		ResultSet rs = pstmt.executeQuery();

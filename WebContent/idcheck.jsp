@@ -14,7 +14,7 @@
 	boolean idchk=false;
 	try {
 		Connection conn = DriverManager.getConnection(url, username, password);
-		String sql = "select * from user where id=\"" + userid + "\"";
+		String sql = "select * from member where MEM_ID=\"" + userid + "\"";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		ResultSet rs = pstmt.executeQuery();
 		if(rs.next()){

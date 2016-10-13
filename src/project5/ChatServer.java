@@ -43,22 +43,21 @@ public class ChatServer {
 		String ipAddress = (String) session.getUserProperties().get("ipAddress");
 		try {
 			Connection conn = getConnection();
-			String sql = "SELECT * FROM chat where reg_date>=date_sub(now(),interval 1 day);";
-			String sql2 = "INSERT INTO chat (message, ipAddress, userid) VALUES (?,?,?)";
+			String sql = "SELECT * FROM chat where send_date>=date_sub(now(),interval 1 day);";
+			String sql2 = "INSERT INTO chat (MESSAGE, USER_ID) VALUES (?,?)";
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			PreparedStatement pstmt = null;
 			ResultSet rs = stmt.executeQuery();
 			
 			if(!rs.next()){
 				first = true;
-				sql="INSERT INTO chat (message) VALUES (now())";
+				sql="INSERT INTO chat (MESSAGE) VALUES (now())";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.executeUpdate();
 			}
 			pstmt = conn.prepareStatement(sql2);
-			pstmt.setString(1, userid + " : " + message);
-			pstmt.setString(2, ipAddress);
-			pstmt.setString(3, userid);
+			pstmt.setString(1, message);
+			pstmt.setString(2, userid);
 			pstmt.executeUpdate();
 			pstmt.close();
 			conn.close();
@@ -137,16 +136,16 @@ public class ChatServer {
 		ResultSet trs = null;
 		try {
 			conn = getConnection();
-			String sql = "INSERT INTO person (userid,ipAddress,fk_num) VALUES (?,?,?)"; //들어왔을 때 대화목록번호,사용자정보 저장
-			String sql2 = "INSERT INTO temp (userid) VALUES (?)";
-			String sql3 = "SELECT * FROM person where userid=\""+userid+"\""; // 사용자 정보 테이블 읽기
+			String sql = "INSERT INTO user (USER_ID,ENTER_NUM) VALUES (?,?)"; //들어왔을 때 대화목록번호,사용자정보 저장
+			String sql2 = "INSERT INTO participant (PART_ID) VALUES (?)";
+			String sql3 = "SELECT * FROM user where USER_ID=\""+userid+"\""; // 사용자 정보 테이블 읽기
 			String sql4 = "SELECT * FROM chat";// 대화내용
-			String sql5 = "SELECT * FROM temp where userid=\""+userid+"\"";
+			String sql5 = "SELECT * FROM participant where PART_ID=\""+userid+"\"";
 			
 			ptmt = conn.prepareStatement(sql);
 			ttmt = conn.prepareStatement(sql2);
 			pstmt = conn.prepareStatement(sql3);
-			cstmt = conn.prepareStatement(sql4 + " order by num desc limit 1"); // 대화내용
+			cstmt = conn.prepareStatement(sql4 + " order by chat_no desc limit 1"); // 대화내용
 			tstmt = conn.prepareStatement(sql5);
 			
 			prs = pstmt.executeQuery();
@@ -162,15 +161,13 @@ public class ChatServer {
 					isUpdated = true;
 			} else {
 				if (crs.next()) { // 테이블에 대화내용 있으면
-					int num = Integer.parseInt(crs.getString("num")) + 1;
+					int num = Integer.parseInt(crs.getString("chat_no")) + 1;
 					ptmt.setString(1, userid);
-					ptmt.setString(2, ipAddress);
-					ptmt.setInt(3, num);
+					ptmt.setInt(2, num);
 				} else {
-					int num = Integer.parseInt(crs.getString("num"));
+					int num = Integer.parseInt(crs.getString("chat_no"));
 					ptmt.setString(1, userid);
-					ptmt.setString(2, ipAddress);
-					ptmt.setInt(3, num);
+					ptmt.setInt(2, num);
 				}
 				ptmt.executeUpdate();
 			}
@@ -218,23 +215,12 @@ public class ChatServer {
 	@OnClose
 	public void onClose(Session session) {
 		String userid = (String) session.getUserProperties().get("userid");
-		if (userid != null) {
-			synchronized (clients) {
-				for (Session client : clients) {
-					try {
-						if (!client.equals(session))
-							client.getBasicRemote().sendText(buildJsonData3(userid));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
+		
 		System.out.println("클로즈 : " + session);
 		clients.remove(session);
 		try {
 			Connection conn = getConnection();
-			String sql = "DELETE FROM temp where userid=\""+userid+"\"";;
+			String sql = "DELETE FROM participant where PART_ID=\""+userid+"\"";;
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.executeUpdate();
 			pstmt.close();
@@ -253,7 +239,8 @@ public class ChatServer {
 	public String buildJsonData(String userid, String message) {
 
 		JSONObject obj = new JSONObject();
-		obj.put("message", userid + " : " + message);
+		obj.put("message",  message);
+		obj.put("userid", userid);
 		// System.out.println("json string : " + obj.toJSONString());
 		return obj.toJSONString();
 
